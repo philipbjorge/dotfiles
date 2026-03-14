@@ -29,12 +29,22 @@ require("lazy").setup({
     end,
   },
   {
+    "coder/claudecode.nvim",
+    dependencies = { "folke/snacks.nvim" },
+    config = true,
+    keys = {
+      { "<leader>c", "<cmd>ClaudeCode<CR>",     desc = "claude" },
+      { "<leader>c", "<cmd>ClaudeCodeSend<CR>", mode = "v", desc = "claude (send selection)" },
+    },
+  },
+  {
     "folke/which-key.nvim",
     event = "VeryLazy",
     opts = {
       icons = { mappings = false },
       spec = {
-        { "<leader>t", desc = "terminal" },
+        { "<leader>t",  desc = "terminal" },
+        { "<leader>c",  group = "claude" },
       },
     },
   },
