@@ -60,7 +60,7 @@ alias clear=z4h-clear-screen-soft-bottom
 z4h init || return
 
 # Extend PATH.
-path=(~/bin $path)
+path=(~/.local/bin ~/bin $path)
 
 # Export environment variables.
 export GPG_TTY=$TTY

@@ -39,6 +39,12 @@ install_cask() {
 install_cask font-jetbrains-mono-nerd-font
 install_cask neovide
 
+# Claude Code
+if ! command -v claude &>/dev/null; then
+	curl -fsSL https://claude.ai/install.sh | bash
+fi
+claude plugin install superpowers@claude-plugins-official
+
 rsync --exclude ".git/" \
 	--exclude ".DS_Store" \
 	--exclude ".osx" \
@@ -46,6 +52,27 @@ rsync --exclude ".git/" \
 	--exclude "README.md" \
 	--exclude "LICENSE-MIT.txt" \
 	-avh --no-perms . ~;
+
+# Create default .zshenv and .zshrc if they don't already exist.
+# These source the dotfiles-managed versions, so you can add local
+# customizations below the source line without them being overwritten.
+if [ ! -f ~/.zshenv ]; then
+	cat > ~/.zshenv <<'EOF'
+source ~/.zshenv.dotfiles
+
+# Add your local customizations below this line.
+EOF
+	echo "Created ~/.zshenv (sources ~/.zshenv.dotfiles)"
+fi
+
+if [ ! -f ~/.zshrc ]; then
+	cat > ~/.zshrc <<'EOF'
+source ~/.zshrc.dotfiles
+
+# Add your local customizations below this line.
+EOF
+	echo "Created ~/.zshrc (sources ~/.zshrc.dotfiles)"
+fi
 
 # Bootstrap neovim plugins and treesitter parsers
 echo "Installing neovim plugins..."
