@@ -38,6 +38,7 @@ install_cask() {
 
 install_cask font-jetbrains-mono-nerd-font
 install_cask neovide
+install_cask superwhisper
 
 # Claude Code
 if ! command -v claude &>/dev/null; then
