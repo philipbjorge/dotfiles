@@ -39,12 +39,12 @@ install_cask() {
 install_cask font-jetbrains-mono-nerd-font
 install_cask neovide
 install_cask superwhisper
+install_cask cmux
 
 # Claude Code
 if ! command -v claude &>/dev/null; then
 	curl -fsSL https://claude.ai/install.sh | bash
 fi
-claude plugin install superpowers@claude-plugins-official
 
 rsync --exclude ".git/" \
 	--exclude ".DS_Store" \

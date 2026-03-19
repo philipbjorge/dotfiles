@@ -98,6 +98,8 @@ compdef _directories md
 
 # Define aliases.
 # alias tree='tree -a -I .git'
+alias vi=nvim
+alias vim=nvim
 
 # Add flags to existing aliases.
 # alias ls="${aliases[ls]:-ls} -A"
