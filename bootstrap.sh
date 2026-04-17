@@ -7,10 +7,11 @@ git pull origin main;
 # Tools
 install_pkg() {
   local pkg=$1
+  local apt_pkg=${2:-$1}  # optional apt-specific package name
   if command -v brew &>/dev/null; then
     brew install "$pkg"
   elif command -v apt-get &>/dev/null; then
-    sudo apt-get install -y "$pkg"
+    sudo apt-get install -y "$apt_pkg"
   elif command -v dnf &>/dev/null; then
     sudo dnf install -y "$pkg"
   elif command -v pacman &>/dev/null; then
@@ -21,11 +22,31 @@ install_pkg() {
 }
 
 install_pkg ripgrep
-install_pkg fd
-install_pkg lazygit
+install_pkg fd fd-find
+if command -v fdfind &>/dev/null && ! command -v fd &>/dev/null; then
+  sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd
+fi
 install_pkg neovim
 install_pkg tree-sitter-cli
-install_pkg ruff
+
+# lazygit is not in apt repos; install via GitHub release on Linux
+if ! command -v lazygit &>/dev/null; then
+  if command -v brew &>/dev/null; then
+    brew install lazygit
+  elif command -v apt-get &>/dev/null; then
+    LAZYGIT_VERSION=$(curl -fsSL "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep '"tag_name"' | sed 's/.*"v\([^"]*\)".*/\1/')
+    curl -fsSL "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz" | sudo tar -xz -C /usr/local/bin lazygit
+  fi
+fi
+
+# ruff is not in apt repos; install via standalone installer
+if ! command -v ruff &>/dev/null; then
+  if command -v brew &>/dev/null; then
+    brew install ruff
+  else
+    curl -fsSL https://astral.sh/ruff/install.sh | sh
+  fi
+fi
 
 # Casks (macOS only)
 install_cask() {
