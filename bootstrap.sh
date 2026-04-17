@@ -36,10 +36,19 @@ install_cask() {
   fi
 }
 
+install_cask tailscale
 install_cask font-jetbrains-mono-nerd-font
-install_cask neovide
 install_cask superwhisper
 install_cask cmux
+install_cask hyperkey
+install_cask loop
+install_cask obsidian
+install_cask orion
+
+# Tailscale (Linux only — macOS uses the cask above)
+if ! command -v brew &>/dev/null && ! command -v tailscale &>/dev/null; then
+  curl -fsSL https://tailscale.com/install.sh | sh
+fi
 
 # Claude Code
 if ! command -v claude &>/dev/null; then
@@ -80,3 +89,5 @@ echo "Installing neovim plugins..."
 nvim --headless "+Lazy! sync" +qa 2>/dev/null
 echo "Installing treesitter parsers..."
 nvim --headless "+TSInstall! dart python typescript javascript tsx lua yaml hcl json bash dockerfile" +qa 2>/dev/null
+
+
