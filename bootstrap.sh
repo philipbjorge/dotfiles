@@ -21,12 +21,24 @@ install_pkg() {
   fi
 }
 
+install_pkg zsh
 install_pkg ripgrep
 install_pkg fd fd-find
 if command -v fdfind &>/dev/null && ! command -v fd &>/dev/null; then
   sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd
 fi
-install_pkg neovim
+# Neovim: apt ships 0.9.x on Ubuntu; config requires 0.11+. Use official tarball on Linux.
+if command -v brew &>/dev/null; then
+  brew install neovim
+elif ! command -v nvim &>/dev/null || [ "$(nvim --version | head -1 | awk '{print $2}' | tr -d 'v' | cut -d. -f1-2)" \< "0.11" ]; then
+  echo "Installing Neovim from official tarball..."
+  tmp=$(mktemp -d)
+  curl -fsSL https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz | tar -xz -C "$tmp"
+  sudo rm -rf /opt/nvim
+  sudo mv "$tmp"/nvim-linux-x86_64 /opt/nvim
+  sudo ln -sf /opt/nvim/bin/nvim /usr/local/bin/nvim
+  rm -rf "$tmp"
+fi
 install_pkg tree-sitter-cli
 
 # lazygit is not in apt repos; install via GitHub release on Linux
@@ -76,13 +88,48 @@ if ! command -v claude &>/dev/null; then
 	curl -fsSL https://claude.ai/install.sh | bash
 fi
 
-rsync --exclude ".git/" \
-	--exclude ".DS_Store" \
-	--exclude ".osx" \
-	--exclude "bootstrap.sh" \
-	--exclude "README.md" \
-	--exclude "LICENSE-MIT.txt" \
-	-avh --no-perms . ~;
+# Git identity
+git config --global user.name "Philip Bjorge"
+git config --global user.email "philipbjorge@philipbjorge.com"
+
+rsync_args=(
+	--exclude ".git/"
+	--exclude ".DS_Store"
+	--exclude ".osx"
+	--exclude "bootstrap.sh"
+	--exclude "README.md"
+	--exclude "LICENSE-MIT.txt"
+	-avh --no-perms
+)
+
+echo "Previewing changes to ~ ..."
+changes=$(rsync "${rsync_args[@]}" --dry-run --itemize-changes . ~ \
+	| awk '/^[<>ch*][fL]/ {
+		op = (substr($0, 4, 1) == "+") ? "new   " : "update"
+		printf "  %s  %s\n", op, substr($0, 13)
+	}')
+if [ -z "$changes" ]; then
+	echo "  (no file changes)"
+else
+	echo "$changes"
+	echo
+	# Show diffs for files that already exist (updates, not new files)
+	while IFS= read -r line; do
+		[[ "$line" == *"update"* ]] || continue
+		path=$(echo "$line" | awk '{print $2}')
+		if [ -f "$HOME/$path" ] && [ -f "./$path" ]; then
+			echo "--- diff: ~/$path"
+			diff -u "$HOME/$path" "./$path" | head -40 || true
+			echo
+		fi
+	done <<< "$changes"
+	read -r -p "Apply these changes? [y/N] " reply
+	if [[ ! "$reply" =~ ^[Yy]$ ]]; then
+		echo "Skipping rsync."
+	else
+		rsync "${rsync_args[@]}" . ~
+	fi
+fi
 
 # Create default .zshenv and .zshrc if they don't already exist.
 # These source the dotfiles-managed versions, so you can add local
@@ -103,6 +150,17 @@ source ~/.zshrc.dotfiles
 # Add your local customizations below this line.
 EOF
 	echo "Created ~/.zshrc (sources ~/.zshrc.dotfiles)"
+fi
+
+# Set zsh as the login shell
+zsh_path=$(command -v zsh)
+if [ -n "$zsh_path" ] && [ "$SHELL" != "$zsh_path" ]; then
+  # Ensure zsh is listed in /etc/shells (Homebrew zsh usually isn't)
+  if ! grep -qx "$zsh_path" /etc/shells 2>/dev/null; then
+    echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+  fi
+  echo "Setting login shell to $zsh_path (may prompt for password)..."
+  chsh -s "$zsh_path"
 fi
 
 # Bootstrap neovim plugins and treesitter parsers

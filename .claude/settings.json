@@ -1,5 +1,21 @@
 {
   "permissions": {
-    "defaultMode": "plan"
+    "defaultMode": "auto"
+  },
+  "skipAutoPermissionPrompt": true,
+  "attribution": {
+    "commit": "",
+    "pr": ""
+  },
+  "extraKnownMarketplaces": {
+    "superpowers-extended-cc-marketplace": {
+      "source": {
+        "source": "github",
+        "repo": "pcvelz/superpowers"
+      }
+    }
+  },
+  "enabledPlugins": {
+    "superpowers-extended-cc@superpowers-extended-cc-marketplace": true
   }
 }
