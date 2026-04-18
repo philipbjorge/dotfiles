@@ -23,6 +23,7 @@ install_pkg() {
 
 install_pkg zsh
 install_pkg ripgrep
+install_pkg jq
 install_pkg fd fd-find
 if command -v fdfind &>/dev/null && ! command -v fd &>/dev/null; then
   sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd
@@ -48,6 +49,27 @@ if ! command -v lazygit &>/dev/null; then
   elif command -v apt-get &>/dev/null; then
     LAZYGIT_VERSION=$(curl -fsSL "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep '"tag_name"' | sed 's/.*"v\([^"]*\)".*/\1/')
     curl -fsSL "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz" | sudo tar -xz -C /usr/local/bin lazygit
+  fi
+fi
+
+# lazydocker is not in apt repos; install via GitHub release on Linux
+if ! command -v lazydocker &>/dev/null; then
+  if command -v brew &>/dev/null; then
+    brew install lazydocker
+  elif command -v apt-get &>/dev/null; then
+    LAZYDOCKER_VERSION=$(curl -fsSL "https://api.github.com/repos/jesseduffield/lazydocker/releases/latest" | grep '"tag_name"' | sed 's/.*"v\([^"]*\)".*/\1/')
+    curl -fsSL "https://github.com/jesseduffield/lazydocker/releases/download/v${LAZYDOCKER_VERSION}/lazydocker_${LAZYDOCKER_VERSION}_Linux_x86_64.tar.gz" | sudo tar -xz -C /usr/local/bin lazydocker
+  fi
+fi
+
+# tea (Gitea/Forgejo CLI): not in apt; install via Gitea release on Linux
+if ! command -v tea &>/dev/null; then
+  if command -v brew &>/dev/null; then
+    brew install tea
+  elif command -v apt-get &>/dev/null; then
+    TEA_VERSION=$(curl -fsSL "https://gitea.com/api/v1/repos/gitea/tea/releases/latest" | grep -o '"tag_name":"[^"]*' | cut -d'"' -f4 | tr -d 'v')
+    sudo curl -fsSL -o /usr/local/bin/tea "https://gitea.com/gitea/tea/releases/download/v${TEA_VERSION}/tea-${TEA_VERSION}-linux-amd64"
+    sudo chmod +x /usr/local/bin/tea
   fi
 fi
 
