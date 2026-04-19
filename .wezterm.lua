@@ -23,7 +23,7 @@ config.color_scheme = "Tokyo Night Storm"
 config.font = wezterm.font("JetBrainsMono Nerd Font", { weight = "Regular" })
 config.font_size = 14.0
 config.harfbuzz_features = { "calt=1", "clig=1", "liga=1" }
-config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
+config.window_decorations = "TITLE|RESIZE"
 config.window_padding = { left = 4, right = 4, top = 4, bottom = 4 }
 
 -- Tab bar
