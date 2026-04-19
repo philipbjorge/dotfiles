@@ -29,27 +29,6 @@ require("lazy").setup({
     end,
   },
   {
-    "coder/claudecode.nvim",
-    dependencies = { "folke/snacks.nvim" },
-    cmd = { "ClaudeCode", "ClaudeCodeSend" },
-    opts = {
-      terminal = {
-        split_side = "right",
-        split_width_percentage = 0.40,
-        provider = "snacks",
-        snacks_win_opts = {
-          keys = {
-            term_normal = { "<esc>", "<C-\\><C-n>", mode = "t", desc = "Exit terminal mode" },
-          },
-        },
-      },
-    },
-    keys = {
-      { "<leader>c", "<cmd>ClaudeCode<CR>",     desc = "claude" },
-      { "<leader>c", "<cmd>ClaudeCodeSend<CR>", mode = "v", desc = "claude (send selection)" },
-    },
-  },
-  {
     "folke/which-key.nvim",
     event = "VeryLazy",
     opts = {
@@ -69,80 +48,13 @@ require("lazy").setup({
       spec = {
         { "<leader>?",  desc = "command palette" },
         { "<leader>b",  desc = "buffers" },
-        { "<leader>c",  desc = "claude" },
         { "<leader>e",  desc = "explorer" },
         { "<leader>q",  desc = "close buffer" },
-        { "<leader>t",  desc = "terminal" },
         { "<leader>d",  group = "diagnostics" },
         { "<leader>g",  group = "git" },
         { "<leader>l",  group = "lsp" },
       },
     },
-  },
-  {
-    "akinsho/toggleterm.nvim",
-    version = "*",
-    opts = {
-      open_mapping = [[<leader>t]],
-      insert_mappings = false,
-      direction = "horizontal",
-      size = 15,
-      persist_size = true,
-      persist_mode = true,
-    },
-    config = function(_, opts)
-      require("toggleterm").setup(opts)
-
-      -- Tab winbar: shows all open terminals above the terminal window
-      local function term_label(id)
-        for _, buf in ipairs(vim.api.nvim_list_bufs()) do
-          if vim.b[buf].toggle_number == id then
-            local title = vim.b[buf].term_title or ""
-            if title ~= "" then
-              -- strip "user@host: " prefix, just show the path/command
-              return title:match(": (.+)$") or title
-            end
-          end
-        end
-        return "terminal " .. id
-      end
-
-      _G.ToggleTermRefreshWinbar = function()
-        local ok, tt = pcall(require, "toggleterm.terminal")
-        if not ok then return end
-        local terms = tt.get_all(true)
-        if #terms == 0 then return end
-        for _, win in ipairs(vim.api.nvim_list_wins()) do
-          local buf = vim.api.nvim_win_get_buf(win)
-          if vim.bo[buf].filetype == "toggleterm" then
-            local cur_id = vim.b[buf].toggle_number
-            local parts = {}
-            for _, t in ipairs(terms) do
-              local label = term_label(t.id)
-              if t.id == cur_id then
-                table.insert(parts, "%#TabLineSel# ● " .. label .. " %#WinBar#")
-              else
-                table.insert(parts, "%#TabLine# " .. label .. " %#WinBar#")
-              end
-            end
-            vim.wo[win].winbar = "  " .. table.concat(parts, " ")
-          end
-        end
-      end
-
-      vim.api.nvim_create_autocmd({ "TermOpen", "BufWinEnter" }, {
-        pattern = "term://*toggleterm*",
-        callback = vim.schedule_wrap(_G.ToggleTermRefreshWinbar),
-      })
-      -- refresh tab names when shell updates the terminal title (e.g. on cd)
-      vim.api.nvim_create_autocmd("TermResponse", {
-        callback = function()
-          if vim.bo.filetype == "toggleterm" then
-            vim.schedule(_G.ToggleTermRefreshWinbar)
-          end
-        end,
-      })
-    end,
   },
   -- ── Treesitter ───────────────────────────────────────────────────────
   {
@@ -240,15 +152,6 @@ require("lazy").setup({
         diagnostics = "nvim_lsp",           -- show error/warn counts on tabs
         show_buffer_close_icons = true,
         show_close_icon = false,
-        custom_filter = function(buf)
-          local bt = vim.bo[buf].buftype
-          local ft = vim.bo[buf].filetype
-          local name = vim.api.nvim_buf_get_name(buf)
-          if bt == "terminal" then return false end
-          if ft:match("^snacks_") then return false end
-          if name:match("^term://") then return false end
-          return true
-        end,
       },
     },
     keys = {
@@ -279,7 +182,7 @@ require("lazy").setup({
     opts = {
       options = {
         disabled_filetypes = {
-          statusline = { "toggleterm", "snacks_terminal", "snacks_picker_list" },
+          statusline = { "snacks_picker_list" },
         },
       },
     },
@@ -383,12 +286,8 @@ require("lazy").setup({
       },
       scroll = { enabled = true },
       gitbrowse = {},
-      lazygit = {},
       notifier = { enabled = true },
       input = { enabled = true },
-      terminal = {
-        win = { wo = { winbar = "" } },
-      },
       dashboard = {
         enabled = true,
         sections = {
@@ -428,7 +327,6 @@ require("lazy").setup({
       { "<leader>/",       function() Snacks.picker.grep() end,     desc = "grep" },
       { "<leader>e",       function() Snacks.picker.explorer() end, desc = "explorer" },
       { "<leader>b",       function() Snacks.picker.buffers() end,  desc = "buffers" },
-      { "<leader>gg",      function() Snacks.lazygit() end,         desc = "lazygit" },
       { "<leader>go",      function() Snacks.gitbrowse() end,       desc = "open on github" },
       { "<leader>gs",      function() Snacks.picker.git_diff() end, desc = "staged diff" },
       { "<leader>ls",      function() Snacks.picker.lsp_symbols() end, desc = "symbols" },
@@ -521,27 +419,6 @@ vim.keymap.set("n", "<Esc>", function()
   vim.cmd("nohlsearch")
 end, { silent = true, desc = "Close float / clear search" })
 
--- Terminal mode: exit and window navigation (global, not plugin-dependent)
-vim.keymap.set("t", "<Esc>",   "<C-\\><C-n>",       { desc = "Exit terminal mode" })
-vim.keymap.set("t", "<C-h>",   "<Cmd>wincmd h<CR>", { desc = "Move to left window" })
-vim.keymap.set("t", "<C-j>",   "<Cmd>wincmd j<CR>", { desc = "Move to lower window" })
-vim.keymap.set("t", "<C-k>",   "<Cmd>wincmd k<CR>", { desc = "Move to upper window" })
-vim.keymap.set("t", "<C-l>",   "<Cmd>wincmd l<CR>", { desc = "Move to right window" })
-
--- Edge-aware window navigation: move normally, or open a panel at the edge
-local function edge_nav(dir, edge_fn)
-  local cur = vim.api.nvim_get_current_win()
-  vim.cmd("wincmd " .. dir)
-  if vim.api.nvim_get_current_win() == cur then
-    edge_fn()
-  end
-end
-
-map("n", "<C-h>", function() edge_nav("h", function() Snacks.picker.explorer() end) end, "Move left / open explorer")
-map("n", "<C-j>", function() edge_nav("j", function() vim.cmd("ToggleTerm") end) end,    "Move down / open terminal")
-map("n", "<C-k>", "<C-w>k", "Move to upper window")
-map("n", "<C-l>", function() edge_nav("l", function() vim.cmd("ClaudeCode") end) end,    "Move right / open claude")
-
 -- ============================================================
 -- Neovide
 -- ============================================================
@@ -561,63 +438,6 @@ if vim.g.neovide then
 
   -- Cmd+S save
   vim.keymap.set({ "n", "i", "v" }, "<D-s>", "<cmd>w<cr>", { desc = "Save" })
-
-  -- Multi-terminal: Cmd+T new, Cmd+[ / Cmd+] cycle, Cmd+D vertical split
-  local function max_term_id()
-    local max = 0
-    for _, t in ipairs(require("toggleterm.terminal").get_all(true)) do
-      if t.id > max then max = t.id end
-    end
-    return max
-  end
-
-  local function refresh_winbar()
-    vim.schedule(function()
-      if _G.ToggleTermRefreshWinbar then _G.ToggleTermRefreshWinbar() end
-    end)
-  end
-
-  vim.keymap.set({ "n", "t" }, "<D-t>", function()
-    local new_id = max_term_id() + 1
-    if vim.b.toggle_number then vim.cmd("hide") end
-    vim.cmd(new_id .. "ToggleTerm")
-    refresh_winbar()
-    vim.schedule(function() vim.cmd("startinsert") end)
-  end, { desc = "New terminal" })
-
-  vim.keymap.set("t", "<D-[>", function()
-    local terms = require("toggleterm.terminal").get_all(true)
-    if #terms < 2 then return end
-    local cur = vim.b.toggle_number
-    for i, t in ipairs(terms) do
-      if t.id == cur then
-        vim.cmd("hide")
-        terms[((i - 2) % #terms) + 1]:open()
-        refresh_winbar()
-        vim.schedule(function() vim.cmd("startinsert") end)
-        return
-      end
-    end
-  end, { desc = "Prev terminal" })
-
-  vim.keymap.set("t", "<D-]>", function()
-    local terms = require("toggleterm.terminal").get_all(true)
-    if #terms < 2 then return end
-    local cur = vim.b.toggle_number
-    for i, t in ipairs(terms) do
-      if t.id == cur then
-        vim.cmd("hide")
-        terms[(i % #terms) + 1]:open()
-        refresh_winbar()
-        vim.schedule(function() vim.cmd("startinsert") end)
-        return
-      end
-    end
-  end, { desc = "Next terminal" })
-
-  vim.keymap.set({ "n", "t" }, "<D-d>", function()
-    vim.cmd((max_term_id() + 1) .. "ToggleTerm direction=vertical size=80")
-  end, { desc = "Split terminal" })
 
   -- Cmd+= / Cmd+- font scaling
   vim.keymap.set("n", "<D-=>", function()

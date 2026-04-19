@@ -27,6 +27,12 @@ install_pkg zsh
 install_pkg ripgrep
 install_pkg jq
 install_pkg fd fd-find
+# Mason (nvim LSP installer) needs unzip for archive-based servers (terraformls)
+# and python3-venv for pip-based servers
+install_pkg unzip
+if command -v apt-get &>/dev/null; then
+  sudo apt-get install -y python3-venv
+fi
 if command -v fdfind &>/dev/null && ! command -v fd &>/dev/null; then
   sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd
 fi
