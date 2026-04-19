@@ -118,6 +118,7 @@ require("lazy").setup({
   },
   {
     "akinsho/flutter-tools.nvim",
+    ft = "dart",
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = {
       flutter_path = (function()
@@ -257,7 +258,7 @@ require("lazy").setup({
         -- dart falls back to LSP (dartls via flutter-tools handles dart format)
       },
       format_on_save = {
-        timeout_ms = 2000,
+        timeout_ms = 500,
         lsp_format = "fallback",  -- use LSP if no conform formatter matched
       },
     },
@@ -284,7 +285,6 @@ require("lazy").setup({
       picker = {
         layout = { preset = "sidebar" },
       },
-      scroll = { enabled = true },
       gitbrowse = {},
       notifier = { enabled = true },
       input = { enabled = true },
@@ -297,7 +297,6 @@ require("lazy").setup({
           { section = "startup" },
         },
       },
-      indent = { enabled = true },
     },
     keys = {
       { "<leader>?", function()
