@@ -105,9 +105,6 @@ config.cursor_blink_rate            = 500
 config.cursor_blink_ease_in         = "EaseIn"
 config.cursor_blink_ease_out        = "EaseOut"
 
--- Mouse
-config.pane_focus_follows_mouse     = true
-
 -- Scrollback
 config.scrollback_lines             = 50000
 
