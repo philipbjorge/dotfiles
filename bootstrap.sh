@@ -120,6 +120,24 @@ install_cask obsidian
 install_cask orion
 install_cask wezterm
 
+# macOS dock shortcut: Baker (wezterm connect SSHMUX:baker)
+if command -v brew &>/dev/null; then
+  brew install dockutil
+  if [ ! -d ~/Applications/Baker.app ]; then
+    mkdir -p ~/Applications
+    osacompile -o ~/Applications/Baker.app -e \
+      'do shell script "/opt/homebrew/bin/wezterm connect SSHMUX:baker > /dev/null 2>&1 &"
+       delay 1
+       tell application "WezTerm" to activate'
+    cp "$(dirname "${BASH_SOURCE}")/icons/baker.icns" \
+      ~/Applications/Baker.app/Contents/Resources/applet.icns
+    touch ~/Applications/Baker.app
+  fi
+  if ! dockutil --list | grep -q "Baker"; then
+    dockutil --add ~/Applications/Baker.app
+  fi
+fi
+
 # Tailscale (Linux only — macOS uses the cask above)
 if ! command -v brew &>/dev/null && ! command -v tailscale &>/dev/null; then
   curl -fsSL https://tailscale.com/install.sh | sh
@@ -203,15 +221,16 @@ EOF
 	echo "Created ~/.zshrc (sources ~/.zshrc.dotfiles)"
 fi
 
-# Set zsh as the login shell
-zsh_path=$(command -v zsh)
-if [ -n "$zsh_path" ] && [ "$SHELL" != "$zsh_path" ]; then
-  # Ensure zsh is listed in /etc/shells (Homebrew zsh usually isn't)
-  if ! grep -qx "$zsh_path" /etc/shells 2>/dev/null; then
-    echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+# Set zsh as the login shell (Linux only — on macOS, z4h manages this)
+if ! command -v brew &>/dev/null; then
+  zsh_path=$(command -v zsh)
+  if [ -n "$zsh_path" ] && [ "$SHELL" != "$zsh_path" ]; then
+    if ! grep -qx "$zsh_path" /etc/shells 2>/dev/null; then
+      echo "$zsh_path" | sudo tee -a /etc/shells >/dev/null
+    fi
+    echo "Setting login shell to $zsh_path (may prompt for password)..."
+    chsh -s "$zsh_path"
   fi
-  echo "Setting login shell to $zsh_path (may prompt for password)..."
-  chsh -s "$zsh_path"
 fi
 
 # Bootstrap neovim plugins and treesitter parsers
