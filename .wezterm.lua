@@ -47,41 +47,6 @@ local function getDirectoryName(path)
   return path:match("([^/]+)$") or "Unknown"
 end
 
-local process_icons = {
-  ["docker"]         = wezterm.nerdfonts.linux_docker,
-  ["docker-compose"] = wezterm.nerdfonts.linux_docker,
-  ["psql"]           = wezterm.nerdfonts.dev_postgresql,
-  ["kuberlr"]        = wezterm.nerdfonts.linux_docker,
-  ["kubectl"]        = wezterm.nerdfonts.linux_docker,
-  ["stern"]          = wezterm.nerdfonts.linux_docker,
-  ["nvim"]           = wezterm.nerdfonts.custom_vim,
-  ["make"]           = wezterm.nerdfonts.seti_makefile,
-  ["vim"]            = wezterm.nerdfonts.dev_vim,
-  ["go"]             = wezterm.nerdfonts.seti_go,
-  ["zsh"]            = wezterm.nerdfonts.dev_terminal,
-  ["bash"]           = wezterm.nerdfonts.cod_terminal_bash,
-  ["btm"]            = wezterm.nerdfonts.mdi_chart_donut_variant,
-  ["htop"]           = wezterm.nerdfonts.mdi_chart_donut_variant,
-  ["cargo"]          = wezterm.nerdfonts.dev_rust,
-  ["sudo"]           = wezterm.nerdfonts.fa_hashtag,
-  ["lazydocker"]     = wezterm.nerdfonts.linux_docker,
-  ["git"]            = wezterm.nerdfonts.dev_git,
-  ["lua"]            = wezterm.nerdfonts.seti_lua,
-  ["wget"]           = wezterm.nerdfonts.mdi_arrow_down_box,
-  ["curl"]           = wezterm.nerdfonts.mdi_flattr,
-  ["gh"]             = wezterm.nerdfonts.dev_github_badge,
-  ["ruby"]           = wezterm.nerdfonts.cod_ruby,
-  ["pwsh"]           = wezterm.nerdfonts.seti_powershell,
-  ["node"]           = wezterm.nerdfonts.dev_nodejs_small,
-  ["dotnet"]         = wezterm.nerdfonts.md_language_csharp,
-}
-
-local function get_process(tab)
-  local name = tab.active_pane.foreground_process_name:match("([^/\\]+)%.exe$")
-      or tab.active_pane.foreground_process_name:match("([^/\\]+)$")
-  return process_icons[name] or wezterm.nerdfonts.seti_checkbox_unchecked
-end
-
 -- Build window_frame + tab colors from a scheme name
 local function build_theme(scheme_name)
   local def = wezterm.color.get_builtin_schemes()[scheme_name]
@@ -134,7 +99,8 @@ config.hide_tab_bar_if_only_one_tab = false
 
 -- Cursor
 config.default_cursor_style         = "BlinkingBlock"
-config.animation_fps                = 60
+config.animation_fps                = 120
+config.max_fps                      = 120
 config.cursor_blink_rate            = 500
 config.cursor_blink_ease_in         = "EaseIn"
 config.cursor_blink_ease_out        = "EaseOut"
