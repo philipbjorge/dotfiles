@@ -104,6 +104,19 @@ wezterm.on("update-status", function(window, pane)
   else
     window:set_config_overrides({ window_frame = REMOTE_FRAME })
   end
+
+  local workspace = window:active_workspace()
+  local cwd_uri = pane.current_working_dir
+  local hostname = (cwd_uri and cwd_uri.host and cwd_uri.host ~= "" and cwd_uri.host)
+    or (domain ~= "local" and domain)
+    or wezterm.hostname()
+
+  window:set_right_status(wezterm.format({
+    { Attribute = { Intensity = "Bold" } },
+    { Text = " " .. wezterm.nerdfonts.oct_person .. " " .. hostname },
+    { Text = "  " .. wezterm.nerdfonts.oct_table .. " " .. workspace },
+    { Text = "  " },
+  }))
 end)
 
 return config
