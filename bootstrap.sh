@@ -4,6 +4,8 @@ cd "$(dirname "${BASH_SOURCE}")";
 
 git pull origin main;
 
+if [[ "${1}" != "--rsync-only" ]]; then
+
 # Tools
 install_pkg() {
   local pkg=$1
@@ -126,9 +128,13 @@ if command -v brew &>/dev/null; then
   if [ ! -d ~/Applications/Baker.app ]; then
     mkdir -p ~/Applications
     osacompile -o ~/Applications/Baker.app -e \
-      'do shell script "/opt/homebrew/bin/wezterm connect SSHMUX:baker > /dev/null 2>&1 &"
-       delay 1
-       tell application "WezTerm" to activate'
+      'if application "WezTerm" is running then
+         tell application "WezTerm" to activate
+       else
+         do shell script "/opt/homebrew/bin/wezterm connect SSHMUX:baker > /dev/null 2>&1 &"
+         delay 1
+         tell application "WezTerm" to activate
+       end if'
     cp "$(dirname "${BASH_SOURCE}")/icons/baker.icns" \
       ~/Applications/Baker.app/Contents/Resources/applet.icns
     touch ~/Applications/Baker.app
@@ -160,6 +166,8 @@ fi
 # Git identity
 git config --global user.name "Philip Bjorge"
 git config --global user.email "philipbjorge@philipbjorge.com"
+
+fi # --rsync-only
 
 rsync_args=(
 	--exclude ".git/"
