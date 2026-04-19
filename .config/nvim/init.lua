@@ -419,35 +419,6 @@ vim.keymap.set("n", "<Esc>", function()
   vim.cmd("nohlsearch")
 end, { silent = true, desc = "Close float / clear search" })
 
--- ============================================================
--- Neovide
--- ============================================================
-
-if vim.g.neovide then
-  vim.o.guifont = "JetBrainsMono Nerd Font:h14"
-
-  vim.g.neovide_cursor_animation_length    = 0.08
-  vim.g.neovide_cursor_trail_size          = 0.4
-  vim.g.neovide_scroll_animation_length    = 0.2
-  vim.g.neovide_floating_shadow            = false
-
-  -- Cmd+V paste in insert/command mode
-  vim.keymap.set({ "i", "c" }, "<D-v>", "<C-r>+", { desc = "Paste" })
-  -- Cmd+V paste in normal/visual mode
-  vim.keymap.set({ "n", "v" }, "<D-v>", '"+p',    { desc = "Paste" })
-
-  -- Cmd+S save
-  vim.keymap.set({ "n", "i", "v" }, "<D-s>", "<cmd>w<cr>", { desc = "Save" })
-
-  -- Cmd+= / Cmd+- font scaling
-  vim.keymap.set("n", "<D-=>", function()
-    vim.g.neovide_scale_factor = (vim.g.neovide_scale_factor or 1) + 0.1
-  end, { desc = "Increase font size" })
-  vim.keymap.set("n", "<D-->", function()
-    vim.g.neovide_scale_factor = math.max(0.5, (vim.g.neovide_scale_factor or 1) - 0.1)
-  end, { desc = "Decrease font size" })
-end
-
 -- Markdown settings
 vim.api.nvim_create_autocmd("FileType", {
   pattern = "markdown",
