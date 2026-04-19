@@ -84,8 +84,9 @@ if ! command -v ruff &>/dev/null; then
   fi
 fi
 
-# Node.js: apt ships an older major on Ubuntu 24.04; use NodeSource on Linux
-if ! command -v node &>/dev/null; then
+# Node.js: apt ships an older major on Ubuntu 24.04 and splits npm into a separate
+# package; use NodeSource on Linux so we get node+npm together.
+if ! command -v node &>/dev/null || ! command -v npm &>/dev/null; then
   if command -v brew &>/dev/null; then
     brew install node
   elif command -v apt-get &>/dev/null; then
