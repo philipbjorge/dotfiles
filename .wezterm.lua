@@ -5,9 +5,9 @@ local config = wezterm.config_builder()
 -- GPU / WebGPU
 local gpus = wezterm.gui.enumerate_gpus()
 local best_gpu = (function()
-  local backend_score  = { Metal = 1 }
-  local device_score   = { DiscreteGpu = 128, IntegratedGpu = 64, Other = 32, Cpu = 16 }
-  local best, score = nil, 0
+  local backend_score = { Metal = 1 }
+  local device_score  = { DiscreteGpu = 128, IntegratedGpu = 64, Other = 32, Cpu = 16 }
+  local best, score   = nil, 0
   for _, gpu in ipairs(gpus) do
     local s = (backend_score[gpu.backend] or 0) + (device_score[gpu.device_type] or 0)
     if s > score then best, score = gpu, s end
@@ -48,37 +48,37 @@ local function getDirectoryName(path)
 end
 
 local process_icons = {
-  ["docker"]        = wezterm.nerdfonts.linux_docker,
-  ["docker-compose"]= wezterm.nerdfonts.linux_docker,
-  ["psql"]          = wezterm.nerdfonts.dev_postgresql,
-  ["kuberlr"]       = wezterm.nerdfonts.linux_docker,
-  ["kubectl"]       = wezterm.nerdfonts.linux_docker,
-  ["stern"]         = wezterm.nerdfonts.linux_docker,
-  ["nvim"]          = wezterm.nerdfonts.custom_vim,
-  ["make"]          = wezterm.nerdfonts.seti_makefile,
-  ["vim"]           = wezterm.nerdfonts.dev_vim,
-  ["go"]            = wezterm.nerdfonts.seti_go,
-  ["zsh"]           = wezterm.nerdfonts.dev_terminal,
-  ["bash"]          = wezterm.nerdfonts.cod_terminal_bash,
-  ["btm"]           = wezterm.nerdfonts.mdi_chart_donut_variant,
-  ["htop"]          = wezterm.nerdfonts.mdi_chart_donut_variant,
-  ["cargo"]         = wezterm.nerdfonts.dev_rust,
-  ["sudo"]          = wezterm.nerdfonts.fa_hashtag,
-  ["lazydocker"]    = wezterm.nerdfonts.linux_docker,
-  ["git"]           = wezterm.nerdfonts.dev_git,
-  ["lua"]           = wezterm.nerdfonts.seti_lua,
-  ["wget"]          = wezterm.nerdfonts.mdi_arrow_down_box,
-  ["curl"]          = wezterm.nerdfonts.mdi_flattr,
-  ["gh"]            = wezterm.nerdfonts.dev_github_badge,
-  ["ruby"]          = wezterm.nerdfonts.cod_ruby,
-  ["pwsh"]          = wezterm.nerdfonts.seti_powershell,
-  ["node"]          = wezterm.nerdfonts.dev_nodejs_small,
-  ["dotnet"]        = wezterm.nerdfonts.md_language_csharp,
+  ["docker"]         = wezterm.nerdfonts.linux_docker,
+  ["docker-compose"] = wezterm.nerdfonts.linux_docker,
+  ["psql"]           = wezterm.nerdfonts.dev_postgresql,
+  ["kuberlr"]        = wezterm.nerdfonts.linux_docker,
+  ["kubectl"]        = wezterm.nerdfonts.linux_docker,
+  ["stern"]          = wezterm.nerdfonts.linux_docker,
+  ["nvim"]           = wezterm.nerdfonts.custom_vim,
+  ["make"]           = wezterm.nerdfonts.seti_makefile,
+  ["vim"]            = wezterm.nerdfonts.dev_vim,
+  ["go"]             = wezterm.nerdfonts.seti_go,
+  ["zsh"]            = wezterm.nerdfonts.dev_terminal,
+  ["bash"]           = wezterm.nerdfonts.cod_terminal_bash,
+  ["btm"]            = wezterm.nerdfonts.mdi_chart_donut_variant,
+  ["htop"]           = wezterm.nerdfonts.mdi_chart_donut_variant,
+  ["cargo"]          = wezterm.nerdfonts.dev_rust,
+  ["sudo"]           = wezterm.nerdfonts.fa_hashtag,
+  ["lazydocker"]     = wezterm.nerdfonts.linux_docker,
+  ["git"]            = wezterm.nerdfonts.dev_git,
+  ["lua"]            = wezterm.nerdfonts.seti_lua,
+  ["wget"]           = wezterm.nerdfonts.mdi_arrow_down_box,
+  ["curl"]           = wezterm.nerdfonts.mdi_flattr,
+  ["gh"]             = wezterm.nerdfonts.dev_github_badge,
+  ["ruby"]           = wezterm.nerdfonts.cod_ruby,
+  ["pwsh"]           = wezterm.nerdfonts.seti_powershell,
+  ["node"]           = wezterm.nerdfonts.dev_nodejs_small,
+  ["dotnet"]         = wezterm.nerdfonts.md_language_csharp,
 }
 
 local function get_process(tab)
   local name = tab.active_pane.foreground_process_name:match("([^/\\]+)%.exe$")
-    or tab.active_pane.foreground_process_name:match("([^/\\]+)$")
+      or tab.active_pane.foreground_process_name:match("([^/\\]+)$")
   return process_icons[name] or wezterm.nerdfonts.seti_checkbox_unchecked
 end
 
@@ -92,8 +92,8 @@ local function build_theme(scheme_name)
     overrides = {
       color_scheme = scheme_name,
       window_frame = {
-        font = tab_font,
-        font_size = 14.0,
+        font                 = tab_font,
+        font_size            = 14.0,
         active_titlebar_bg   = brightness_auto_adjust(bg, 0.165),
         inactive_titlebar_bg = brightness_auto_adjust(bg, 0.100),
         border_bottom_height = "1px",
@@ -106,57 +106,57 @@ local function build_theme(scheme_name)
       colors = {
         tab_bar = {
           inactive_tab_edge = brightness_auto_adjust(bg, 0.500),
-          active_tab   = { bg_color = bg,     fg_color = def.foreground },
-          inactive_tab = { bg_color = "none", fg_color = brightness_auto_adjust(bg, 0.500) },
+          active_tab        = { bg_color = bg, fg_color = def.foreground },
+          inactive_tab      = { bg_color = "none", fg_color = brightness_auto_adjust(bg, 0.500) },
         },
       },
     },
   }
 end
 
-local LOCAL_THEME  = build_theme("Gruvbox dark, medium (base16)")
-local REMOTE_THEME = build_theme("Tokyo Night Storm")
+local LOCAL_THEME                   = build_theme("Gruvbox dark, medium (base16)")
+local REMOTE_THEME                  = build_theme("Tokyo Night Storm")
 
 -- Appearance
-config.color_scheme     = REMOTE_THEME.overrides.color_scheme
-config.window_frame     = REMOTE_THEME.overrides.window_frame
-config.colors           = REMOTE_THEME.overrides.colors
-config.font             = wezterm.font("JetBrainsMono Nerd Font", { weight = "Regular" })
-config.font_size        = 14.0
-config.harfbuzz_features = { "calt=1", "clig=1", "liga=1" }
-config.window_decorations = "INTEGRATED_BUTTONS|RESIZE"
-config.window_padding   = { left = 4, right = 4, top = 4, bottom = 4 }
+config.color_scheme                 = REMOTE_THEME.overrides.color_scheme
+config.window_frame                 = REMOTE_THEME.overrides.window_frame
+config.colors                       = REMOTE_THEME.overrides.colors
+config.font                         = wezterm.font("JetBrainsMono Nerd Font", { weight = "Regular" })
+config.font_size                    = 14.0
+config.harfbuzz_features            = { "calt=1", "clig=1", "liga=1" }
+config.window_decorations           = "TITLE|RESIZE"
+config.window_padding               = { left = 4, right = 4, top = 4, bottom = 4 }
 
 -- Tab bar
-config.use_fancy_tab_bar         = true
-config.tab_bar_at_bottom         = false
+config.use_fancy_tab_bar            = true
+config.tab_bar_at_bottom            = false
 config.hide_tab_bar_if_only_one_tab = false
 
 -- Cursor
-config.default_cursor_style = "BlinkingBlock"
-config.animation_fps        = 60
-config.cursor_blink_rate    = 500
-config.cursor_blink_ease_in  = "EaseIn"
-config.cursor_blink_ease_out = "EaseOut"
+config.default_cursor_style         = "BlinkingBlock"
+config.animation_fps                = 60
+config.cursor_blink_rate            = 500
+config.cursor_blink_ease_in         = "EaseIn"
+config.cursor_blink_ease_out        = "EaseOut"
 
 -- Mouse
-config.pane_focus_follows_mouse = true
+config.pane_focus_follows_mouse     = true
 
 -- Scrollback
-config.scrollback_lines = 50000
+config.scrollback_lines             = 50000
 
 -- Bell
-config.audible_bell = "SystemBeep"
+config.audible_bell                 = "SystemBeep"
 
 -- Hyperlinks
-config.hyperlink_rules = wezterm.default_hyperlink_rules()
+config.hyperlink_rules              = wezterm.default_hyperlink_rules()
 
 -- Copy on select
-config.selection_word_boundary = " \t\n{}[]()\"'`,;:"
+config.selection_word_boundary      = " \t\n{}[]()\"'`,;:"
 
 -- Command palette
-config.command_palette_font_size = 16
-config.command_palette_rows      = 7
+config.command_palette_font_size    = 16
+config.command_palette_rows         = 7
 
 -- Tab title: ⌘{index}  {dir}
 wezterm.on("format-tab-title", function(tab)
@@ -175,8 +175,8 @@ wezterm.on("update-status", function(window, pane)
   local workspace = window:active_workspace()
   local cwd_uri = pane.current_working_dir
   local hostname = (cwd_uri and cwd_uri.host and cwd_uri.host ~= "" and cwd_uri.host)
-    or (domain ~= "local" and domain)
-    or wezterm.hostname()
+      or (domain ~= "local" and domain)
+      or wezterm.hostname()
 
   window:set_left_status(wezterm.format({
     { Foreground = { Color = theme.def.foreground } },
@@ -197,22 +197,26 @@ config.keys = {
   { key = "w", mods = "CMD",       action = act.CloseCurrentPane({ confirm = true }) },
   { key = "[", mods = "CMD",       action = act.ActivateTabRelative(-1) },
   { key = "]", mods = "CMD",       action = act.ActivateTabRelative(1) },
-  { key = "r", mods = "CMD",       action = act.PromptInputLine {
-    description = "Rename tab",
-    action = wezterm.action_callback(function(window, _, line)
-      if line then window:active_tab():set_title(line) end
-    end),
-  }},
+  {
+    key = "r",
+    mods = "CMD",
+    action = act.PromptInputLine {
+      description = "Rename tab",
+      action = wezterm.action_callback(function(window, _, line)
+        if line then window:active_tab():set_title(line) end
+      end),
+    }
+  },
   -- Word navigation
-  { key = "LeftArrow",  mods = "OPT", action = act.SendString("\x1bb") },
-  { key = "RightArrow", mods = "OPT", action = act.SendString("\x1bf") },
+  { key = "LeftArrow",  mods = "OPT",       action = act.SendString("\x1bb") },
+  { key = "RightArrow", mods = "OPT",       action = act.SendString("\x1bf") },
   -- Pane navigation
-  { key = "h", mods = "CTRL", action = act.ActivatePaneDirection("Left") },
-  { key = "j", mods = "CTRL", action = act.ActivatePaneDirection("Down") },
-  { key = "k", mods = "CTRL", action = act.ActivatePaneDirection("Up") },
-  { key = "l", mods = "CTRL", action = act.ActivatePaneDirection("Right") },
-  { key = "z", mods = "CMD", action = act.TogglePaneZoomState },
-  { key = "p", mods = "CMD|SHIFT", action = act.ActivateCommandPalette },
+  { key = "h",          mods = "CTRL",      action = act.ActivatePaneDirection("Left") },
+  { key = "j",          mods = "CTRL",      action = act.ActivatePaneDirection("Down") },
+  { key = "k",          mods = "CTRL",      action = act.ActivatePaneDirection("Up") },
+  { key = "l",          mods = "CTRL",      action = act.ActivatePaneDirection("Right") },
+  { key = "z",          mods = "CMD",       action = act.TogglePaneZoomState },
+  { key = "p",          mods = "CMD|SHIFT", action = act.ActivateCommandPalette },
 }
 
 return config
