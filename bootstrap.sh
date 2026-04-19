@@ -82,6 +82,25 @@ if ! command -v ruff &>/dev/null; then
   fi
 fi
 
+# Node.js: apt ships an older major on Ubuntu 24.04; use NodeSource on Linux
+if ! command -v node &>/dev/null; then
+  if command -v brew &>/dev/null; then
+    brew install node
+  elif command -v apt-get &>/dev/null; then
+    curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
+    sudo apt-get install -y nodejs
+  fi
+fi
+
+# Codex CLI
+if ! command -v codex &>/dev/null && command -v npm &>/dev/null; then
+  if command -v brew &>/dev/null; then
+    npm i -g @openai/codex
+  else
+    sudo npm i -g @openai/codex
+  fi
+fi
+
 # Casks (macOS only)
 install_cask() {
   if command -v brew &>/dev/null; then
@@ -99,10 +118,20 @@ install_cask hyperkey
 install_cask loop
 install_cask obsidian
 install_cask orion
+install_cask wezterm
 
 # Tailscale (Linux only — macOS uses the cask above)
 if ! command -v brew &>/dev/null && ! command -v tailscale &>/dev/null; then
   curl -fsSL https://tailscale.com/install.sh | sh
+fi
+
+# WezTerm (Linux only — macOS uses the cask above). Needed for mux-server over SSH.
+if ! command -v brew &>/dev/null && ! command -v wezterm &>/dev/null && command -v apt-get &>/dev/null; then
+  curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
+  sudo chmod 644 /usr/share/keyrings/wezterm-fury.gpg
+  echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list >/dev/null
+  sudo apt-get update
+  sudo apt-get install -y wezterm
 fi
 
 # Claude Code
