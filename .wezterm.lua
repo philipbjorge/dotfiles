@@ -62,7 +62,7 @@ config.keys = {
   { key = "d", mods = "CMD|SHIFT", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
   -- Tabs
   { key = "t", mods = "CMD",       action = act.SpawnTab("CurrentPaneDomain") },
-  { key = "w", mods = "CMD",       action = act.CloseCurrentTab({ confirm = true }) },
+  { key = "w", mods = "CMD",       action = act.CloseCurrentPane({ confirm = true }) },
   { key = "[", mods = "CMD",       action = act.ActivateTabRelative(-1) },
   { key = "]", mods = "CMD",       action = act.ActivateTabRelative(1) },
   { key = "r", mods = "CMD",       action = act.PromptInputLine {
