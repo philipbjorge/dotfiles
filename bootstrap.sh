@@ -167,6 +167,7 @@ fi
 # Git identity
 git config --global user.name "Philip Bjorge"
 git config --global user.email "philipbjorge@philipbjorge.com"
+git config --global core.editor nvim
 
 fi # --rsync-only
 
@@ -247,5 +248,4 @@ echo "Installing neovim plugins..."
 nvim --headless "+Lazy! sync" +qa 2>/dev/null
 echo "Installing treesitter parsers..."
 nvim --headless "+TSInstall! dart python typescript javascript tsx lua yaml hcl json bash dockerfile" +qa 2>/dev/null
-
 
