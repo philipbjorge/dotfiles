@@ -60,7 +60,11 @@ alias clear=z4h-clear-screen-soft-bottom
 z4h init || return
 
 # Extend PATH.
+# ~/.local/bin: mise binary + uv-managed python shims
 path=(~/.local/bin ~/bin $path)
+
+# mise: shims all pinned tools (node, uv, ripgrep, codex, claude, ...).
+command -v mise >/dev/null && eval "$(mise activate zsh)"
 
 # Export environment variables.
 export GPG_TTY=$TTY

@@ -9,7 +9,7 @@ if [[ "${1}" != "--rsync-only" ]]; then
 # Tools
 install_pkg() {
   local pkg=$1
-  local apt_pkg=${2:-$1}  # optional apt-specific package name
+  local apt_pkg=${2:-$1}
   if command -v brew &>/dev/null; then
     brew install "$pkg"
   elif command -v apt-get &>/dev/null; then
@@ -23,54 +23,27 @@ install_pkg() {
   fi
 }
 
+# Bare system deps — everything else is managed by mise.
 install_pkg zsh
-install_pkg ripgrep
-install_pkg jq
-install_pkg fd fd-find
-# Mason (nvim LSP installer) needs unzip for archive-based servers (terraformls)
-# and python3-venv for pip-based servers
 install_pkg unzip
-if command -v apt-get &>/dev/null; then
-  sudo apt-get install -y python3-venv
-fi
-if command -v fdfind &>/dev/null && ! command -v fd &>/dev/null; then
-  sudo ln -sf /usr/bin/fdfind /usr/local/bin/fd
-fi
-# Neovim: apt ships 0.9.x on Ubuntu; config requires 0.11+. Use official tarball on Linux.
-if command -v brew &>/dev/null; then
-  brew install neovim
-elif ! command -v nvim &>/dev/null || [ "$(nvim --version | head -1 | awk '{print $2}' | tr -d 'v' | cut -d. -f1-2)" \< "0.11" ]; then
-  echo "Installing Neovim from official tarball..."
-  tmp=$(mktemp -d)
-  curl -fsSL https://github.com/neovim/neovim/releases/latest/download/nvim-linux-x86_64.tar.gz | tar -xz -C "$tmp"
-  sudo rm -rf /opt/nvim
-  sudo mv "$tmp"/nvim-linux-x86_64 /opt/nvim
-  sudo ln -sf /opt/nvim/bin/nvim /usr/local/bin/nvim
-  rm -rf "$tmp"
-fi
-install_pkg tree-sitter-cli
 
-# lazygit is not in apt repos; install via GitHub release on Linux
-if ! command -v lazygit &>/dev/null; then
-  if command -v brew &>/dev/null; then
-    brew install lazygit
-  elif command -v apt-get &>/dev/null; then
-    LAZYGIT_VERSION=$(curl -fsSL "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | grep '"tag_name"' | sed 's/.*"v\([^"]*\)".*/\1/')
-    curl -fsSL "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz" | sudo tar -xz -C /usr/local/bin lazygit
-  fi
+# mise: manages all dev runtimes + CLIs. Pinned versions live in
+# .config/mise/config.toml (rsynced below; pre-staged here so `mise install`
+# has the pins available on first run).
+if ! command -v mise &>/dev/null && [ ! -x "$HOME/.local/bin/mise" ]; then
+  curl -fsSL https://mise.run | sh
+fi
+export PATH="$HOME/.local/bin:$PATH"
+mkdir -p "$HOME/.config/mise"
+cp .config/mise/config.toml "$HOME/.config/mise/config.toml"
+mise install
+
+# uv-managed Python (uv itself is installed by mise above).
+if command -v uv &>/dev/null; then
+  uv python install --default 3.14
 fi
 
-# lazydocker is not in apt repos; install via GitHub release on Linux
-if ! command -v lazydocker &>/dev/null; then
-  if command -v brew &>/dev/null; then
-    brew install lazydocker
-  elif command -v apt-get &>/dev/null; then
-    LAZYDOCKER_VERSION=$(curl -fsSL "https://api.github.com/repos/jesseduffield/lazydocker/releases/latest" | grep '"tag_name"' | sed 's/.*"v\([^"]*\)".*/\1/')
-    curl -fsSL "https://github.com/jesseduffield/lazydocker/releases/download/v${LAZYDOCKER_VERSION}/lazydocker_${LAZYDOCKER_VERSION}_Linux_x86_64.tar.gz" | sudo tar -xz -C /usr/local/bin lazydocker
-  fi
-fi
-
-# tea (Gitea/Forgejo CLI): not in apt; install via Gitea release on Linux
+# tea (Gitea/Forgejo CLI): hosted on gitea.com, not in mise registry.
 if ! command -v tea &>/dev/null; then
   if command -v brew &>/dev/null; then
     brew install tea
@@ -78,35 +51,6 @@ if ! command -v tea &>/dev/null; then
     TEA_VERSION=$(curl -fsSL "https://gitea.com/api/v1/repos/gitea/tea/releases/latest" | grep -o '"tag_name":"[^"]*' | cut -d'"' -f4 | tr -d 'v')
     sudo curl -fsSL -o /usr/local/bin/tea "https://gitea.com/gitea/tea/releases/download/v${TEA_VERSION}/tea-${TEA_VERSION}-linux-amd64"
     sudo chmod +x /usr/local/bin/tea
-  fi
-fi
-
-# ruff is not in apt repos; install via standalone installer
-if ! command -v ruff &>/dev/null; then
-  if command -v brew &>/dev/null; then
-    brew install ruff
-  else
-    curl -fsSL https://astral.sh/ruff/install.sh | sh
-  fi
-fi
-
-# Node.js: apt ships an older major on Ubuntu 24.04 and splits npm into a separate
-# package; use NodeSource on Linux so we get node+npm together.
-if ! command -v node &>/dev/null || ! command -v npm &>/dev/null; then
-  if command -v brew &>/dev/null; then
-    brew install node
-  elif command -v apt-get &>/dev/null; then
-    curl -fsSL https://deb.nodesource.com/setup_24.x | sudo -E bash -
-    sudo apt-get install -y nodejs
-  fi
-fi
-
-# Codex CLI
-if ! command -v codex &>/dev/null && command -v npm &>/dev/null; then
-  if command -v brew &>/dev/null; then
-    npm i -g @openai/codex
-  else
-    sudo npm i -g @openai/codex
   fi
 fi
 
@@ -165,11 +109,6 @@ if ! command -v brew &>/dev/null && ! command -v wezterm &>/dev/null && command 
   sudo apt-get install -y wezterm
 fi
 
-# Claude Code
-if ! command -v claude &>/dev/null; then
-	curl -fsSL https://claude.ai/install.sh | bash
-fi
-
 # Git identity
 git config --global user.name "Philip Bjorge"
 git config --global user.email "philipbjorge@philipbjorge.com"
@@ -198,7 +137,6 @@ if [ -z "$changes" ]; then
 else
 	echo "$changes"
 	echo
-	# Show diffs for files that already exist (updates, not new files)
 	while IFS= read -r line; do
 		[[ "$line" == *"update"* ]] || continue
 		path=$(echo "$line" | awk '{print $2}')
@@ -217,8 +155,6 @@ else
 fi
 
 # Create default .zshenv and .zshrc if they don't already exist.
-# These source the dotfiles-managed versions, so you can add local
-# customizations below the source line without them being overwritten.
 if [ ! -f ~/.zshenv ]; then
 	cat > ~/.zshenv <<'EOF'
 source ~/.zshenv.dotfiles
@@ -254,4 +190,3 @@ echo "Installing neovim plugins..."
 nvim --headless "+Lazy! sync" +qa 2>/dev/null
 echo "Installing treesitter parsers..."
 nvim --headless "+TSInstall! dart python typescript javascript tsx lua yaml hcl json bash dockerfile" +qa 2>/dev/null
-
