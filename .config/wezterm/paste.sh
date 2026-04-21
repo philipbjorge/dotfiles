@@ -70,7 +70,7 @@ ssh -o BatchMode=yes "$domain" \
   "mkdir -p ~/$remote_dir && find ~/$remote_dir -type f -mtime +7 -delete 2>/dev/null || true" \
   >&2 || { echo "paste.sh: remote mkdir failed" >&2; exit 2; }
 
-scp -q "$src" "$domain:$remote_dir/$safe_name" >&2 || {
+scp -o BatchMode=yes -q "$src" "$domain:$remote_dir/$safe_name" >&2 || {
   echo "paste.sh: scp failed" >&2
   exit 2
 }
