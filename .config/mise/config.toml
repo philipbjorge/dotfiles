@@ -16,6 +16,11 @@ rtk        = "0.37.2"
 # npm-backed CLIs (no sudo, no global npm needed)
 "npm:@openai/codex"              = "0.122.0"
 "npm:@anthropic-ai/claude-code"  = "2.1.114"
+"npm:ctx7"                       = "0.3.13"  # Context7 library-docs CLI
+
+# github: pulls prebuilt release binaries from GitHub (no compile, verifies SLSA)
+"github:sudosubin/grep-app-cli"  = "0.1.0"   # grep.app code search
+"github:hamsurang/deepwiki-cli"  = "0.2.0"   # DeepWiki repo Q&A
 
 # aqua has a curated asset map for neovim (ubi can't match its release names)
 "aqua:neovim/neovim" = "0.12.1"

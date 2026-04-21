@@ -43,6 +43,12 @@ if command -v uv &>/dev/null; then
   uv python install --default 3.14
 fi
 
+# kagi-ken-cli: Kagi web search via Session Link. Not on npm registry, so
+# mise's npm: backend can't reach it — install from the git tag directly.
+if ! command -v kagi-ken-cli &>/dev/null; then
+  npm install -g github:czottmann/kagi-ken-cli#1.7.0
+fi
+
 # tea (Gitea/Forgejo CLI): hosted on gitea.com, not in mise registry.
 if ! command -v tea &>/dev/null; then
   if command -v brew &>/dev/null; then
