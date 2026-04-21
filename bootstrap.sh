@@ -73,6 +73,11 @@ install_cask obsidian
 install_cask orion
 install_cask wezterm
 
+# Clipboard PNG extractor used by wezterm cmd+v smart-paste.
+if command -v brew &>/dev/null; then
+  brew install pngpaste
+fi
+
 # macOS dock shortcut: Baker (wezterm connect SSHMUX:baker)
 if command -v brew &>/dev/null; then
   brew install dockutil

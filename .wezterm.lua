@@ -155,6 +155,22 @@ end)
 
 -- Keybindings
 config.keys = {
+  -- Smart cmd+v: image bytes or CleanShot path → upload + paste remote path;
+  -- plain text → verbatim paste. Implemented by .config/wezterm/paste.sh.
+  {
+    key = "v",
+    mods = "CMD",
+    action = wezterm.action_callback(function(window, pane)
+      local domain = pane:get_domain_name() or "local"
+      local script = os.getenv("HOME") .. "/.config/wezterm/paste.sh"
+      local ok, stdout, stderr = wezterm.run_child_process({ "bash", script, domain })
+      if ok and stdout and #stdout > 0 then
+        pane:send_paste(stdout)
+      elseif stderr and #stderr > 0 then
+        wezterm.log_error("wezterm-paste: " .. stderr)
+      end
+    end),
+  },
   -- Splits
   { key = "d", mods = "CMD",       action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
   { key = "d", mods = "CMD|SHIFT", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
