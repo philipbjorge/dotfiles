@@ -4,7 +4,8 @@
 #  - image bytes   → save to local cache, print path
 #  - CleanShot path (single-quoted path to an image file that exists) → print stripped path
 #  - anything else → print clipboard text verbatim
-# In this task the script only handles domain="local". Remote upload added in Task 2.
+# For non-local domains, scp the resolved file to ~/.cache/wezterm-paste/ on
+# the target host and print the absolute remote path.
 
 set -uo pipefail
 
@@ -18,7 +19,7 @@ src=""
 
 # 1. Image bytes on clipboard?
 if command -v pngpaste >/dev/null 2>&1; then
-  candidate="$cache/clip_$(date +%s).png"
+  candidate="$cache/clip_$(date +%s)_$$.png"
   if pngpaste "$candidate" >/dev/null 2>&1; then
     src="$candidate"
   else
@@ -54,6 +55,24 @@ if [[ "$domain" == "local" ]]; then
   exit 0
 fi
 
-# 5. Remote pane → deferred to Task 2. For now, fail loud.
-echo "paste.sh: remote upload not implemented yet (domain=$domain)" >&2
-exit 2
+# 5. Remote pane → upload via scp, print absolute remote path.
+
+remote_home="$(ssh -o BatchMode=yes "$domain" 'printf %s "$HOME"')" || {
+  echo "paste.sh: ssh to $domain failed" >&2
+  exit 2
+}
+
+safe_name="$(basename "$src" | tr ' /' '__')"
+remote_dir=".cache/wezterm-paste"
+remote_path="$remote_home/$remote_dir/$safe_name"
+
+ssh -o BatchMode=yes "$domain" \
+  "mkdir -p ~/$remote_dir && find ~/$remote_dir -type f -mtime +7 -delete 2>/dev/null || true" \
+  >&2 || { echo "paste.sh: remote mkdir failed" >&2; exit 2; }
+
+scp -q "$src" "$domain:$remote_dir/$safe_name" >&2 || {
+  echo "paste.sh: scp failed" >&2
+  exit 2
+}
+
+printf '%s' "$remote_path"
