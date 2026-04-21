@@ -11,6 +11,7 @@ tree-sitter = "0.26.8"
 lazygit    = "0.61.1"
 lazydocker = "0.25.2"
 pi         = "0.67.68"
+rtk        = "0.37.2"
 
 # npm-backed CLIs (no sudo, no global npm needed)
 "npm:@openai/codex"              = "0.122.0"

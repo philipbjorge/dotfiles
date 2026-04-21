@@ -70,6 +70,7 @@ command -v mise >/dev/null && eval "$(mise activate zsh)"
 export GPG_TTY=$TTY
 export EDITOR=nvim
 export VISUAL=nvim
+export RTK_TELEMETRY_DISABLED=1
 
 # Source additional local files if they exist.
 z4h source ~/.env.zsh
