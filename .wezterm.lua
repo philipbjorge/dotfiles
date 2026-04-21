@@ -161,7 +161,9 @@ config.keys = {
     key = "v",
     mods = "CMD",
     action = wezterm.action_callback(function(window, pane)
-      local domain = pane:get_domain_name() or "local"
+      local domain_name = pane:get_domain_name() or ""
+      local ssh_host = domain_name:match("^SSHMUX:(.+)$")
+      local domain = ssh_host or "local"
       local script = os.getenv("HOME") .. "/.config/wezterm/paste.sh"
       local ok, stdout, stderr = wezterm.run_child_process({ "bash", script, domain })
       if ok and stdout and #stdout > 0 then

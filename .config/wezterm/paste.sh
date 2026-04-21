@@ -9,6 +9,8 @@
 
 set -uo pipefail
 
+export PATH="/opt/homebrew/bin:/usr/local/bin:$PATH"
+
 domain="${1:-local}"
 
 cache="$HOME/Library/Caches/wezterm-paste"
