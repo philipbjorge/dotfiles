@@ -188,8 +188,6 @@ require("lazy").setup({
       },
     },
   },
-  -- ── Treesitter context ───────────────────────────────────────────────
-  { "nvim-treesitter/nvim-treesitter-context", opts = {} },
   -- ── Diffview ─────────────────────────────────────────────────────────
   {
     "sindrets/diffview.nvim",

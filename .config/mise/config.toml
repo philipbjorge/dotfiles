@@ -10,7 +10,7 @@ fd         = "10.4.2"
 tree-sitter = "0.26.8"
 lazygit    = "0.61.1"
 lazydocker = "0.25.2"
-pi         = "0.67.68"
+pi         = "0.68.1"
 rtk        = "0.37.2"
 
 # npm-backed CLIs (no sudo, no global npm needed)
