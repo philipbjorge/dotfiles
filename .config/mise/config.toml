@@ -26,6 +26,7 @@ sqlite = "3.53.0"
 
 # github: fetches glow's prebuilt release binary (avoids requiring Go locally)
 "github:charmbracelet/glow" = "2.1.2"
+"github:ogulcancelik/herdr" = "v0.5.0"
 
 # aqua has a curated asset map for neovim (ubi can't match its release names)
 "aqua:neovim/neovim" = "0.12.1"
