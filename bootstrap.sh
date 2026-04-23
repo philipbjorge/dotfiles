@@ -129,8 +129,10 @@ fi # --rsync-only
 
 rsync_args=(
 	--exclude ".git/"
+  --exclude ".gitignore"
 	--exclude ".DS_Store"
 	--exclude ".osx"
+  --exclude ".pi-lens/"
 	--exclude "bootstrap.sh"
 	--exclude "README.md"
 	--exclude "LICENSE-MIT.txt"
