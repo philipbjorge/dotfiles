@@ -77,7 +77,7 @@ install_cask hyperkey
 install_cask loop
 install_cask obsidian
 install_cask orion
-install_cask wezterm
+install_cask wezterm@nightly
 
 # Clipboard PNG extractor used by wezterm cmd+v smart-paste.
 if command -v brew &>/dev/null; then
@@ -111,13 +111,18 @@ if ! command -v brew &>/dev/null && ! command -v tailscale &>/dev/null; then
   curl -fsSL https://tailscale.com/install.sh | sh
 fi
 
-# WezTerm (Linux only — macOS uses the cask above). Needed for mux-server over SSH.
-if ! command -v brew &>/dev/null && ! command -v wezterm &>/dev/null && command -v apt-get &>/dev/null; then
-  curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
-  sudo chmod 644 /usr/share/keyrings/wezterm-fury.gpg
-  echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list >/dev/null
-  sudo apt-get update
-  sudo apt-get install -y wezterm
+# WezTerm nightly (Linux only — macOS uses the cask above). Needed for mux-server over SSH.
+# Installs or upgrades to nightly if not already on a nightly build.
+if ! command -v brew &>/dev/null && command -v apt-get &>/dev/null; then
+  WEZTERM_VER=$(wezterm --version 2>/dev/null | awk '{print $2}')
+  if [ -z "$WEZTERM_VER" ] || ! echo "$WEZTERM_VER" | grep -q "nightly\|$(date +%Y)"; then
+    UBUNTU_VER=$(lsb_release -rs 2>/dev/null || echo "22.04")
+    TMP_DEB=$(mktemp /tmp/wezterm-nightly.XXXXXX.deb)
+    curl -fsSL -o "$TMP_DEB" \
+      "https://github.com/wez/wezterm/releases/download/nightly/wezterm-nightly.Ubuntu${UBUNTU_VER}.deb"
+    sudo apt-get install -y "$TMP_DEB"
+    rm -f "$TMP_DEB"
+  fi
 fi
 
 # Git identity
