@@ -138,6 +138,7 @@ rsync_args=(
 	--exclude ".DS_Store"
 	--exclude ".osx"
   --exclude ".pi-lens/"
+	--exclude "AGENTS.md"
 	--exclude "bootstrap.sh"
 	--exclude "README.md"
 	--exclude "LICENSE-MIT.txt"
