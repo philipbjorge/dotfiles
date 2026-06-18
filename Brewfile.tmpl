@@ -14,4 +14,7 @@ cask "1password-cli"
 {{- if and (eq .chezmoi.os "darwin") (.install_gui_apps | default false) }}
 cask "visual-studio-code"
 cask "hyperkey"
+cask "loop"
+cask "maccy"
+cask "meetingbar"
 {{- end }}
