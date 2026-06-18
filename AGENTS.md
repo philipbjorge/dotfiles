@@ -53,7 +53,7 @@ install_gui_apps = true
 ## Scripts
 
 - `run_onchange_after_10-brew-bundle.sh.tmpl` should run Brew only on macOS and include a checksum of the rendered `Brewfile.tmpl`.
-- `run_onchange_after_20-mise-install.sh.tmpl` runs `mise install` and includes a checksum of the rendered mise config.
+- `run_onchange_after_20-mise-install.sh.tmpl` runs `mise install` on macOS and includes a checksum of the rendered mise config.
 - Keep apply-time scripts idempotent and non-interactive.
 - Do not put `gh auth login`, `p10k configure`, or other interactive flows inside `chezmoi apply`.
 - Do not put 1Password sign-in or desktop app setup inside `chezmoi apply`.

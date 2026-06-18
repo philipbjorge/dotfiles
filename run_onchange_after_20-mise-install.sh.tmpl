@@ -1,5 +1,7 @@
+{{ if eq .chezmoi.os "darwin" -}}
 #!/bin/sh
 set -eu
 
 # mise config hash: {{ includeTemplate "dot_config/mise/config.toml.tmpl" . | sha256sum }}
 mise install
+{{- end }}
