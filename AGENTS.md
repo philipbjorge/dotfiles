@@ -47,7 +47,7 @@ install_gui_apps = true
 - Put macOS packages and casks in `Brewfile.tmpl`.
 - Put language runtimes and versioned dev tools in `dot_config/mise/config.toml.tmpl`.
 - Do not install `chezmoi` through mise for bootstrap. `chezmoi` and `mise` are base tools installed by Brew on macOS.
-- Install the 1Password desktop app and `1password-cli` with Brew. Do not try to fully automate 1Password sign-in.
+- Install the 1Password desktop app and `1password-cli` casks with Brew. Do not try to fully automate 1Password sign-in.
 - Do not add Linux support casually. `bootstrap.sh` should continue to fail fast on non-macOS until a proper Linux path exists.
 
 ## Scripts
