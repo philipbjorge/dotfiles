@@ -32,6 +32,7 @@ check_command chezmoi
 check_command mise
 check_command git
 check_command gh
+check_command op
 check_command zsh
 
 check "zshenv syntax" zsh -n "$HOME/.zshenv"
@@ -41,6 +42,7 @@ check "git user.email" git config --global user.email
 check "git credential.helper" git config --global credential.helper
 check "mise doctor" mise doctor
 check "github auth" gh auth status
+check "1password auth" op vault list
 
 if [ "$failures" -ne 0 ]; then
   printf "\n%s check(s) failed.\n" "$failures" >&2

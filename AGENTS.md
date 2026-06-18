@@ -13,6 +13,7 @@ This repo is a macOS-first dotfiles repo managed with chezmoi.
 - Homebrew manages base macOS packages and apps.
 - chezmoi manages dotfiles, templates, and post-apply scripts.
 - mise manages language runtimes and developer tooling versions.
+- 1Password provides secret storage and future chezmoi secret rendering through `onepasswordRead`.
 - zsh4humans owns the shell framework; chezmoi owns the generated startup files.
 
 ## Chezmoi Conventions
@@ -46,6 +47,7 @@ install_gui_apps = true
 - Put macOS packages and casks in `Brewfile.tmpl`.
 - Put language runtimes and versioned dev tools in `dot_config/mise/config.toml.tmpl`.
 - Do not install `chezmoi` through mise for bootstrap. `chezmoi` and `mise` are base tools installed by Brew on macOS.
+- Install the 1Password desktop app and `1password-cli` with Brew. Do not try to fully automate 1Password sign-in.
 - Do not add Linux support casually. `bootstrap.sh` should continue to fail fast on non-macOS until a proper Linux path exists.
 
 ## Scripts
@@ -54,7 +56,9 @@ install_gui_apps = true
 - `run_onchange_after_20-mise-install.sh` runs `mise install`.
 - Keep apply-time scripts idempotent and non-interactive.
 - Do not put `gh auth login`, `p10k configure`, or other interactive flows inside `chezmoi apply`.
+- Do not put 1Password sign-in or desktop app setup inside `chezmoi apply`.
 - `scripts/doctor` is the explicit post-bootstrap validation command.
+- `scripts/setup-auth` is the explicit interactive auth helper for 1Password and GitHub.
 
 ## Validation
 
@@ -76,8 +80,18 @@ zsh -n dot_p10k.zsh
 GitHub login is intentionally manual:
 
 ```sh
-gh auth login
-gh auth setup-git
+scripts/setup-auth
 ```
 
 The Git config enables the macOS Keychain credential helper. `gh auth setup-git` can be run after `gh auth login` to configure GitHub-specific credentials.
+
+## 1Password
+
+1Password setup is intentionally partly manual:
+
+1. Run `scripts/setup-auth`.
+2. Open and sign in to the 1Password desktop app when prompted.
+3. Enable Settings > Developer > Integrate with 1Password CLI.
+4. Let the script verify `op vault list`.
+
+Future secrets should use chezmoi's 1Password template helpers, such as `onepasswordRead`, rather than plaintext values in this repo.

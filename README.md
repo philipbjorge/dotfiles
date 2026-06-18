@@ -17,6 +17,14 @@ After bootstrap, run:
 scripts/doctor
 ```
 
+`scripts/doctor` may report auth failures until GitHub and 1Password are signed in.
+
+For guided auth setup, run:
+
+```sh
+scripts/setup-auth
+```
+
 ## New Mac
 
 One-command install:
@@ -81,7 +89,13 @@ scripts/doctor
 
 ## GitHub Auth
 
-After bootstrap, authenticate GitHub CLI and let it configure GitHub-specific Git credentials:
+After bootstrap, authenticate GitHub CLI and let it configure GitHub-specific Git credentials. The guided path is:
+
+```sh
+scripts/setup-auth
+```
+
+The manual commands are:
 
 ```sh
 gh auth login
@@ -89,6 +103,22 @@ gh auth setup-git
 ```
 
 The generated Git config also enables the macOS Keychain credential helper as the default credential store.
+
+## 1Password Auth
+
+The Brewfile installs the 1Password desktop app and `op` CLI. After bootstrap:
+
+1. Open 1Password and sign in.
+2. In 1Password, enable CLI integration:
+   - Settings > Developer > Integrate with 1Password CLI
+   - Enable Touch ID if desired.
+3. Verify CLI auth:
+
+```sh
+op vault list
+```
+
+1Password authentication is intentionally manual. Once the app integration is enabled, `op` prompts through the desktop app. Future templates can use chezmoi's `onepasswordRead` helper for secrets without storing them in this repo.
 
 ## Local machine data
 

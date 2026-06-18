@@ -5,6 +5,11 @@ brew "jq"
 brew "gh"
 brew "direnv"
 brew "neovim"
+brew "1password-cli"
+
+{{- if eq .chezmoi.os "darwin" }}
+cask "1password"
+{{- end }}
 
 {{- if and (eq .chezmoi.os "darwin") (.install_gui_apps | default false) }}
 cask "visual-studio-code"

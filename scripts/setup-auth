@@ -1,0 +1,50 @@
+#!/bin/sh
+set -u
+
+if [ "$(uname -s)" != "Darwin" ]; then
+  echo "scripts/setup-auth currently supports macOS only." >&2
+  exit 1
+fi
+
+if ! command -v op >/dev/null 2>&1; then
+  echo "1Password CLI is not installed. Run ./bootstrap.sh or chezmoi apply first." >&2
+  exit 1
+fi
+
+if ! command -v gh >/dev/null 2>&1; then
+  echo "GitHub CLI is not installed. Run ./bootstrap.sh or chezmoi apply first." >&2
+  exit 1
+fi
+
+echo "Opening 1Password..."
+open -a "1Password" >/dev/null 2>&1 || true
+
+if ! op vault list >/dev/null 2>&1; then
+  cat <<'EOF'
+
+Unlock 1Password and enable CLI integration:
+
+  Settings > Developer > Integrate with 1Password CLI
+
+Then press return to continue.
+EOF
+  read _
+fi
+
+if op vault list >/dev/null 2>&1; then
+  echo "1Password CLI is authenticated."
+else
+  echo "1Password CLI is not authenticated yet. Re-run scripts/setup-auth after enabling CLI integration." >&2
+fi
+
+if gh auth status >/dev/null 2>&1; then
+  echo "GitHub CLI is authenticated."
+else
+  echo "Starting GitHub CLI auth..."
+  gh auth login
+fi
+
+echo "Configuring Git to use GitHub CLI credentials..."
+gh auth setup-git
+
+echo "Auth setup complete."
