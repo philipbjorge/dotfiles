@@ -2,5 +2,6 @@
 #!/bin/sh
 set -eu
 
+# Brewfile hash: {{ includeTemplate "Brewfile.tmpl" . | sha256sum }}
 brew bundle --file "$HOME/Brewfile"
 {{- end }}
