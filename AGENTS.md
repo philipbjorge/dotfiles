@@ -9,7 +9,9 @@ This repo is a macOS-first dotfiles repo managed with chezmoi.
   - It installs Homebrew if needed.
   - It installs `git`, `chezmoi`, and `mise` with Brew.
   - If run outside this repo, it clones `https://github.com/philipbjorge/dotfiles.git` into `~/src/dotfiles`.
-  - It runs `chezmoi init --apply "$repo_dir"`.
+  - If run inside a clean git checkout, it updates the checkout with `git pull --ff-only` before applying.
+  - It runs `chezmoi init "$repo_dir"` and then `chezmoi apply --source "$repo_dir"` so repeat bootstrap runs apply the checked-out repo explicitly.
+  - It explicitly runs `brew bundle --file "$HOME/Brewfile"` after apply if the rendered Brewfile exists.
   - After apply, it prints next steps and optionally runs `scripts/setup-auth` and `scripts/doctor` when stdin is interactive.
 - Homebrew manages base macOS packages and apps.
 - chezmoi manages dotfiles, templates, and post-apply scripts.
@@ -59,7 +61,7 @@ install_gui_apps = true
 - Do not put `gh auth login`, `p10k configure`, or other interactive flows inside `chezmoi apply`.
 - Do not put 1Password sign-in or desktop app setup inside `chezmoi apply`.
 - `scripts/doctor` is the explicit post-bootstrap validation command.
-- `scripts/setup-auth` is the explicit interactive auth helper for 1Password and GitHub.
+- `scripts/setup-auth` is the explicit interactive auth helper for 1Password and GitHub. It may install the 1Password casks if `op` is missing.
 
 ## Validation
 

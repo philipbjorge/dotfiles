@@ -33,7 +33,7 @@ One-command install:
 /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/philipbjorge/dotfiles/main/bootstrap.sh)"
 ```
 
-This installs Homebrew if needed, installs `git`, `chezmoi`, and `mise`, clones this repo to `~/src/dotfiles`, creates a starter chezmoi config if needed, applies the dotfiles, then offers to run auth setup and doctor.
+This installs Homebrew if needed, installs `git`, `chezmoi`, and `mise`, clones or updates this repo at `~/src/dotfiles`, creates a starter chezmoi config if needed, applies the dotfiles, installs the rendered Brewfile, then offers to run auth setup and doctor.
 
 For a work machine, create `~/.config/chezmoi/chezmoi.toml` first if you want the first apply to use work identity data:
 

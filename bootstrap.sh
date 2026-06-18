@@ -41,6 +41,13 @@ if [ ! -f "$repo_dir/dot_gitconfig.tmpl" ]; then
     git clone "$dotfiles_repo_url" "$dotfiles_dir"
   fi
   repo_dir="$dotfiles_dir"
+elif [ -d "$repo_dir/.git" ]; then
+  if [ -z "$(git -C "$repo_dir" status --porcelain)" ]; then
+    echo "Updating dotfiles repo..."
+    git -C "$repo_dir" pull --ff-only
+  else
+    echo "Skipping dotfiles repo update because it has local changes."
+  fi
 fi
 
 if [ ! -f "$chezmoi_config_file" ]; then
@@ -58,8 +65,16 @@ if [ ! -f "$chezmoi_config_file" ]; then
   echo "Edit $chezmoi_config_file if this machine should use a different profile or email."
 fi
 
+echo "Initializing chezmoi source..."
+chezmoi init "$repo_dir"
+
 echo "Applying dotfiles..."
-chezmoi init --apply "$repo_dir"
+chezmoi apply --source "$repo_dir"
+
+if [ -f "$HOME/Brewfile" ]; then
+  echo "Ensuring Homebrew bundle is installed..."
+  brew bundle --file "$HOME/Brewfile"
+fi
 
 cat <<EOF
 
