@@ -11,6 +11,8 @@ fi
 repo_dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
 chezmoi_config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/chezmoi"
 chezmoi_config_file="$chezmoi_config_dir/chezmoi.toml"
+dotfiles_repo_url="${DOTFILES_REPO_URL:-https://github.com/philipbjorge/dotfiles.git}"
+dotfiles_dir="${DOTFILES_DIR:-$HOME/src/dotfiles}"
 
 toml_escape() {
   printf "%s" "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
@@ -28,7 +30,18 @@ elif [ -x /usr/local/bin/brew ]; then
 fi
 
 echo "Installing bootstrap packages..."
-brew install chezmoi mise
+brew install git chezmoi mise
+
+if [ ! -f "$repo_dir/dot_gitconfig.tmpl" ]; then
+  echo "Cloning dotfiles into $dotfiles_dir"
+  mkdir -p "$(dirname -- "$dotfiles_dir")"
+  if [ -d "$dotfiles_dir/.git" ]; then
+    git -C "$dotfiles_dir" pull --ff-only
+  else
+    git clone "$dotfiles_repo_url" "$dotfiles_dir"
+  fi
+  repo_dir="$dotfiles_dir"
+fi
 
 if [ ! -f "$chezmoi_config_file" ]; then
   echo "Creating starter chezmoi config at $chezmoi_config_file"

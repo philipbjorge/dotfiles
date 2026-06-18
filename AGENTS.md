@@ -7,7 +7,8 @@ This repo is a macOS-first dotfiles repo managed with chezmoi.
 - `bootstrap.sh` is the minimal first-run entrypoint.
   - It supports macOS only.
   - It installs Homebrew if needed.
-  - It installs `chezmoi` and `mise` with Brew.
+  - It installs `git`, `chezmoi`, and `mise` with Brew.
+  - If run outside this repo, it clones `https://github.com/philipbjorge/dotfiles.git` into `~/src/dotfiles`.
   - It runs `chezmoi init --apply "$repo_dir"`.
 - Homebrew manages base macOS packages and apps.
 - chezmoi manages dotfiles, templates, and post-apply scripts.

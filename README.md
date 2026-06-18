@@ -9,7 +9,7 @@ The interactive shell is configured with [Zsh for Humans](https://github.com/rom
 ./bootstrap.sh
 ```
 
-The bootstrap currently supports macOS only. It installs Homebrew if needed, installs `chezmoi` and `mise` with Brew, creates a starter chezmoi config if needed, then applies this repository with chezmoi.
+The bootstrap currently supports macOS only. It installs Homebrew if needed, installs `git`, `chezmoi`, and `mise` with Brew, creates a starter chezmoi config if needed, then applies this repository with chezmoi.
 
 After bootstrap, run:
 
@@ -18,6 +18,31 @@ scripts/doctor
 ```
 
 ## New Mac
+
+One-command install:
+
+```sh
+/bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/philipbjorge/dotfiles/main/bootstrap.sh)"
+```
+
+This installs Homebrew if needed, installs `git`, `chezmoi`, and `mise`, clones this repo to `~/src/dotfiles`, creates a starter chezmoi config if needed, and applies the dotfiles.
+
+For a work machine, create `~/.config/chezmoi/chezmoi.toml` first if you want the first apply to use work identity data:
+
+```sh
+mkdir -p ~/.config/chezmoi
+cat > ~/.config/chezmoi/chezmoi.toml <<'EOF'
+[data]
+profile = "work"
+name = "Philip Bjorge"
+email = "YOUR_WORK_EMAIL"
+install_gui_apps = true
+EOF
+```
+
+Then run the one-command install above.
+
+Manual install:
 
 Clone the repo:
 
