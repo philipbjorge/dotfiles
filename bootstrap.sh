@@ -60,3 +60,35 @@ fi
 
 echo "Applying dotfiles..."
 chezmoi init --apply "$repo_dir"
+
+cat <<EOF
+
+Dotfiles applied.
+
+Next steps:
+  cd "$repo_dir"
+  scripts/setup-auth
+  scripts/doctor
+EOF
+
+if [ -t 0 ]; then
+  if [ -x "$repo_dir/scripts/setup-auth" ]; then
+    printf "\nRun guided auth setup now? [y/N] "
+    read auth_reply
+    case "$auth_reply" in
+      y|Y|yes|YES)
+        "$repo_dir/scripts/setup-auth" || true
+        ;;
+    esac
+  fi
+
+  if [ -x "$repo_dir/scripts/doctor" ]; then
+    printf "\nRun doctor now? [y/N] "
+    read doctor_reply
+    case "$doctor_reply" in
+      y|Y|yes|YES)
+        "$repo_dir/scripts/doctor" || true
+        ;;
+    esac
+  fi
+fi

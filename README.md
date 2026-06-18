@@ -33,7 +33,7 @@ One-command install:
 /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/philipbjorge/dotfiles/main/bootstrap.sh)"
 ```
 
-This installs Homebrew if needed, installs `git`, `chezmoi`, and `mise`, clones this repo to `~/src/dotfiles`, creates a starter chezmoi config if needed, and applies the dotfiles.
+This installs Homebrew if needed, installs `git`, `chezmoi`, and `mise`, clones this repo to `~/src/dotfiles`, creates a starter chezmoi config if needed, applies the dotfiles, then offers to run auth setup and doctor.
 
 For a work machine, create `~/.config/chezmoi/chezmoi.toml` first if you want the first apply to use work identity data:
 
@@ -80,7 +80,9 @@ Run bootstrap:
 ./bootstrap.sh
 ```
 
-Open a fresh terminal, then validate:
+Bootstrap prints the next steps and, when running in an interactive terminal, offers to run auth setup and doctor. Open a fresh terminal afterwards so the new zsh config is fully loaded.
+
+Manual validation:
 
 ```sh
 cd ~/src/dotfiles

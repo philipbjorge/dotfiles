@@ -10,6 +10,7 @@ This repo is a macOS-first dotfiles repo managed with chezmoi.
   - It installs `git`, `chezmoi`, and `mise` with Brew.
   - If run outside this repo, it clones `https://github.com/philipbjorge/dotfiles.git` into `~/src/dotfiles`.
   - It runs `chezmoi init --apply "$repo_dir"`.
+  - After apply, it prints next steps and optionally runs `scripts/setup-auth` and `scripts/doctor` when stdin is interactive.
 - Homebrew manages base macOS packages and apps.
 - chezmoi manages dotfiles, templates, and post-apply scripts.
 - mise manages language runtimes and developer tooling versions.
