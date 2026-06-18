@@ -1,0 +1,89 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+set -eu
+
+# Apply macOS system defaults.
+# Run `man defaults` or search for "defaults write" to find more settings.
+
+echo "Applying macOS system defaults..."
+
+# --- Dock ---
+# Auto-hide Dock (always)
+defaults write com.apple.dock autohide -bool true
+# Don't show recently used apps in Dock
+defaults write com.apple.dock show-recents -bool false
+# Set Dock icon size to 36px
+defaults write com.apple.dock tilesize -int 36
+# Minimize application windows into the Dock icon
+defaults write com.apple.dock minimize-to-application -bool true
+# Don't animate Dock opening
+defaults write com.apple.dock autohide-time-modifier -float 0
+# Remove the auto-hiding Dock delay
+defaults write com.apple.dock autohide-delay -float 0
+
+# --- Finder ---
+# Show hidden files
+defaults write com.apple.finder AppleShowAllFiles -bool true
+# Show path bar
+defaults write com.apple.finder ShowPathbar -bool true
+# Show status bar
+defaults write com.apple.finder ShowStatusBar -bool true
+# Show full POSIX path in title bar
+defaults write com.apple.finder _FXShowPosixPathInTitle -bool true
+# Search the current folder by default
+defaults write com.apple.finder FXDefaultSearchScope -int "1"
+# Set default view to Column view (C = column, N = icon, L = list)
+defaults write com.apple.finder FXPreferredViewStyle -string "clm"
+# Keep folders on top when sorting by name
+defaults write com.apple.finder _FXSortFoldersFirst -bool true
+# Disable the "Are you sure you want to open files from the internet?" dialog
+defaults write com.apple.LaunchServices LSQuarantine -bool false
+# Disable the creation of .DS_Store files on network and USB volumes
+defaults write com.apple.desktopservices DSDontWriteNetworkStores -bool true
+defaults write com.apple.desktopservices DSDontWriteUSBStores -bool true
+# Show connected servers on Desktop
+defaults write com.apple.finder ShowMountedServersOnDesktop -bool true
+
+# --- Keyboard ---
+# Set fast key repeat rate
+defaults write NSGlobalDomain KeyRepeat -int 2
+defaults write NSGlobalDomain InitialKeyRepeat -int 25
+# Use F1-F12 keys as function keys (not media keys)
+defaults write NSGlobalDomain "com.apple.keyboard.fnState" -bool true
+# Enable full keyboard access (Tab can move focus to buttons)
+defaults write NSGlobalDomain AppleKeyboardUIMode -int 3
+
+# --- Trackpad ---
+# Enable tap-to-click
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad Clicking -bool true
+defaults -currentHost write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
+# Enable three-finger drag
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadThreeFingerDrag -bool true
+# Enable swipe between pages (two fingers)
+defaults write com.apple.driver.AppleBluetoothMultitouch.trackpad TrackpadTwoFingerFromRightEdgeSwipe -int 1
+
+# --- Menu Bar ---
+# Show battery percentage
+defaults write com.apple.systemstatus "BatteryShowPercentage" -bool true
+# Show Bluetooth in menu bar
+defaults write com.apple.controlcenter "NSStatusItemVisible.Bluetooth" -bool true
+
+# --- Misc ---
+# Disable machine crash / memory error reports
+defaults write com.apple.CrashReporter DialogType -string "none"
+# Set sidebar icon size to medium
+defaults write NSGlobalDomain NSTableViewDefaultSizeMode -int 2
+# Show the ~/Library directory
+chflags nohidden ~/Library
+# Try to show /Volumes (may fail without root)
+chflags nohidden /Volumes 2>/dev/null || true
+# Enable the systemwide dark menu bar
+defaults write NSGlobalDomain AppleInterfaceStyle -string "dark"
+
+# --- Restart affected apps ---
+for app in "Dock" "Finder" "SystemUIServer"; do
+  killall "$app" 2>/dev/null || true
+done
+
+echo "macOS defaults applied. Some changes require a logout/restart to take full effect."
+{{- end }}
