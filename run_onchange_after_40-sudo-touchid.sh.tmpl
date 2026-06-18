@@ -1,0 +1,35 @@
+{{ if eq .chezmoi.os "darwin" -}}
+#!/bin/sh
+set -eu
+
+# Enable Touch ID for sudo authentication.
+# Creates /etc/pam.d/sudo_local which is included by the system's /etc/pam.d/sudo
+# if it exists. This avoids modifying the system-managed sudo file directly.
+
+sudo_local="/etc/pam.d/sudo_local"
+
+if [ -f "$sudo_local" ] && grep -q "pam_tid" "$sudo_local" 2>/dev/null; then
+  echo "sudo Touch ID already configured."
+  exit 0
+fi
+
+echo "Configuring sudo to allow Touch ID..."
+
+# Write the sudo_local file with Touch ID support
+sudo tee "$sudo_local" >/dev/null <<'PAM'
+# sudo_local: local configuration for sudo
+#
+# This file is included from /etc/pam.d/sudo if it exists.
+# Add Touch ID support so sudo can authenticate via Touch ID.
+
+auth       sufficient     pam_tid.so
+PAM
+
+# Set the same permissions as the system sudo file
+sudo chmod 444 "$sudo_local"
+
+echo "sudo Touch ID enabled. Changes take effect immediately."
+echo "You can now use Touch ID for sudo in most terminals."
+echo ""
+echo "Note: Some terminals (like SSH sessions) may still require a password."
+{{- end }}

@@ -68,6 +68,13 @@ defaults write com.apple.systemstatus "BatteryShowPercentage" -bool true
 # Show Bluetooth in menu bar
 defaults write com.apple.controlcenter "NSStatusItemVisible.Bluetooth" -bool true
 
+# --- Default Terminal ---
+# Set Ghostty as the default terminal for SSH and other URL schemes
+if command -v duti >/dev/null 2>&1; then
+  duti -s com.mitchellh.ghostty x-scheme-handler/terminal 2>/dev/null || true
+  duti -s com.mitchellh.ghostty ssh 2>/dev/null || true
+fi
+
 # --- Misc ---
 # Disable machine crash / memory error reports
 defaults write com.apple.CrashReporter DialogType -string "none"
