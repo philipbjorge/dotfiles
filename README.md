@@ -44,7 +44,6 @@ cat > ~/.config/chezmoi/chezmoi.toml <<'EOF'
 profile = "work"
 name = "Philip Bjorge"
 email = "YOUR_WORK_EMAIL"
-install_gui_apps = true
 EOF
 ```
 
@@ -70,7 +69,6 @@ cat > ~/.config/chezmoi/chezmoi.toml <<'EOF'
 profile = "work"
 name = "Philip Bjorge"
 email = "YOUR_WORK_EMAIL"
-install_gui_apps = true
 EOF
 ```
 
@@ -137,5 +135,4 @@ Example:
 profile = "personal"
 name = "Philip Bjorge"
 email = "github@philipbjorge.com"
-install_gui_apps = true
 ```

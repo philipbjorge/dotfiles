@@ -35,7 +35,6 @@ This repo is a macOS-first dotfiles repo managed with chezmoi.
 profile = "personal"
 name = "Philip Bjorge"
 email = "github@philipbjorge.com"
-install_gui_apps = true
 ```
 
 ## Shell

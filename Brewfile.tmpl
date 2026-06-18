@@ -9,12 +9,13 @@ brew "neovim"
 {{- if eq .chezmoi.os "darwin" }}
 cask "1password"
 cask "1password-cli"
-{{- end }}
-
-{{- if and (eq .chezmoi.os "darwin") (.install_gui_apps | default false) }}
-cask "visual-studio-code"
+cask "bartender"
+cask "font-jetbrains-mono"
+cask "ghostty"
+cask "handy"
 cask "hyperkey"
 cask "loop"
 cask "maccy"
 cask "meetingbar"
+cask "visual-studio-code"
 {{- end }}

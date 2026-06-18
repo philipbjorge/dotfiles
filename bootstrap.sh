@@ -60,7 +60,6 @@ if [ ! -f "$chezmoi_config_file" ]; then
     printf "profile = \"personal\"\n"
     printf "name = \"%s\"\n" "$(toml_escape "${git_name:-Philip Bjorge}")"
     printf "email = \"%s\"\n" "$(toml_escape "${git_email:-github@philipbjorge.com}")"
-    printf "install_gui_apps = true\n"
   } >"$chezmoi_config_file"
   echo "Edit $chezmoi_config_file if this machine should use a different profile or email."
 fi
