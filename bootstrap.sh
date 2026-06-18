@@ -9,6 +9,12 @@ if [ "$os" != "Darwin" ]; then
 fi
 
 repo_dir="$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)"
+chezmoi_config_dir="${XDG_CONFIG_HOME:-$HOME/.config}/chezmoi"
+chezmoi_config_file="$chezmoi_config_dir/chezmoi.toml"
+
+toml_escape() {
+  printf "%s" "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
+}
 
 if ! command -v brew >/dev/null 2>&1; then
   echo "Installing Homebrew..."
@@ -23,6 +29,21 @@ fi
 
 echo "Installing bootstrap packages..."
 brew install chezmoi mise
+
+if [ ! -f "$chezmoi_config_file" ]; then
+  echo "Creating starter chezmoi config at $chezmoi_config_file"
+  mkdir -p "$chezmoi_config_dir"
+  git_name="$(git config --global user.name 2>/dev/null || true)"
+  git_email="$(git config --global user.email 2>/dev/null || true)"
+  {
+    printf "[data]\n"
+    printf "profile = \"personal\"\n"
+    printf "name = \"%s\"\n" "$(toml_escape "${git_name:-Philip Bjorge}")"
+    printf "email = \"%s\"\n" "$(toml_escape "${git_email:-github@philipbjorge.com}")"
+    printf "install_gui_apps = true\n"
+  } >"$chezmoi_config_file"
+  echo "Edit $chezmoi_config_file if this machine should use a different profile or email."
+fi
 
 echo "Applying dotfiles..."
 chezmoi init --apply "$repo_dir"

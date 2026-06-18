@@ -9,11 +9,48 @@ The interactive shell is configured with [Zsh for Humans](https://github.com/rom
 ./bootstrap.sh
 ```
 
-The bootstrap currently supports macOS only. It installs Homebrew if needed, installs `chezmoi` and `mise` with Brew, then applies this repository with chezmoi.
+The bootstrap currently supports macOS only. It installs Homebrew if needed, installs `chezmoi` and `mise` with Brew, creates a starter chezmoi config if needed, then applies this repository with chezmoi.
 
 After bootstrap, run:
 
 ```sh
+scripts/doctor
+```
+
+## New Mac
+
+Clone the repo:
+
+```sh
+mkdir -p ~/src
+cd ~/src
+git clone https://github.com/philipbjorge/dotfiles.git
+cd dotfiles
+```
+
+Optional: create machine-specific data before bootstrapping. If this file does not exist, `bootstrap.sh` creates a personal starter config.
+
+```sh
+mkdir -p ~/.config/chezmoi
+cat > ~/.config/chezmoi/chezmoi.toml <<'EOF'
+[data]
+profile = "work"
+name = "Philip Bjorge"
+email = "YOUR_WORK_EMAIL"
+install_gui_apps = true
+EOF
+```
+
+Run bootstrap:
+
+```sh
+./bootstrap.sh
+```
+
+Open a fresh terminal, then validate:
+
+```sh
+cd ~/src/dotfiles
 scripts/doctor
 ```
 
