@@ -1,0 +1,50 @@
+#!/bin/sh
+set -u
+
+failures=0
+
+check() {
+  name="$1"
+  shift
+
+  printf "checking %-28s" "$name"
+  if "$@" >/tmp/dotfiles-doctor.out 2>/tmp/dotfiles-doctor.err; then
+    printf "ok\n"
+  else
+    failures=$((failures + 1))
+    printf "failed\n"
+    if [ -s /tmp/dotfiles-doctor.err ]; then
+      sed 's/^/  /' /tmp/dotfiles-doctor.err
+    elif [ -s /tmp/dotfiles-doctor.out ]; then
+      sed 's/^/  /' /tmp/dotfiles-doctor.out
+    fi
+  fi
+
+  rm -f /tmp/dotfiles-doctor.out /tmp/dotfiles-doctor.err
+}
+
+check_command() {
+  check "$1" command -v "$1"
+}
+
+check_command brew
+check_command chezmoi
+check_command mise
+check_command git
+check_command gh
+check_command zsh
+
+check "zshenv syntax" zsh -n "$HOME/.zshenv"
+check "zshrc syntax" zsh -n "$HOME/.zshrc"
+check "git user.name" git config --global user.name
+check "git user.email" git config --global user.email
+check "git credential.helper" git config --global credential.helper
+check "mise doctor" mise doctor
+check "github auth" gh auth status
+
+if [ "$failures" -ne 0 ]; then
+  printf "\n%s check(s) failed.\n" "$failures" >&2
+  exit 1
+fi
+
+printf "\nAll checks passed.\n"

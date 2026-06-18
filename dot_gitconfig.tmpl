@@ -1,0 +1,14 @@
+[user]
+    name = {{ .name | default "Philip Bjorge" | quote }}
+    email = {{ .email | default "github@philipbjorge.com" | quote }}
+
+[init]
+    defaultBranch = main
+
+[pull]
+    rebase = false
+
+{{- if eq .chezmoi.os "darwin" }}
+[credential]
+    helper = osxkeychain
+{{- end }}
