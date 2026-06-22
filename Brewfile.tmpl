@@ -15,8 +15,14 @@ cask "font-jetbrains-mono"
 cask "ghostty"
 cask "handy"
 cask "hyperkey"
+{{- if eq .data.profile "work" }}
+cask "linear"
+{{- end }}
 cask "loop"
 cask "maccy"
 cask "meetingbar"
+{{- if eq .data.profile "work" }}
+cask "slack"
+{{- end }}
 cask "visual-studio-code"
 {{- end }}
