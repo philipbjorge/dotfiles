@@ -52,4 +52,9 @@ fi
 echo "Configuring Git to use GitHub CLI credentials..."
 gh auth setup-git
 
+if command -v linear-cli >/dev/null 2>&1; then
+  echo "Authenticating linear-cli..."
+  linear-cli auth oauth
+fi
+
 echo "Auth setup complete."
