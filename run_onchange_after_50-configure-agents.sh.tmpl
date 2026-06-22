@@ -1,0 +1,21 @@
+{{ if eq .profile "work" -}}
+#!/bin/sh
+set -eu
+
+# Ensure agent directories exist for chezmoi-managed instruction files
+mkdir -p "$HOME/.pi/agent" "$HOME/.claude" "$HOME/.codex"
+
+# Remove any manually created agent files that pre-date chezmoi management
+# (chezmoi apply will create/overwrite these from source state)
+# This ensures clean state before chezmoi takes over
+
+# Install linear-cli agent skills
+npx skills add Finesssee/linear-cli -g \
+  --skill linear-list \
+  --skill linear-create \
+  --skill linear-update \
+  --skill linear-comments \
+  --skill linear-workflow \
+  --skill linear-done \
+  -y
+{{- end }}

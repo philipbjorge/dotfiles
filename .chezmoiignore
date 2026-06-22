@@ -1,0 +1,5 @@
+# Files that should stay in the repo and not be installed by chezmoi
+AGENTS.md
+bootstrap.sh
+README.md
+scripts/

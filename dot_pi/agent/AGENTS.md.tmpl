@@ -1,0 +1,61 @@
+# Global Agent Instructions
+
+Cross-project guidelines and gotchas for AI coding agents.
+
+## Shell Quoting Pitfalls
+
+### Literal `\n` in Single-Quoted Strings
+
+When passing descriptions or multi-line content to CLI tools, **single-quoted strings treat `\n` as literal backslash-n, not a newline.**
+
+```bash
+# BAD — \n stays literal
+linear-cli i create "Title" -t ENG -d 'Line 1\nLine 2\n\nLine 3'
+
+# GOOD — use JSON with proper \n escaping
+linear-cli i create "Title" -t ENG --data '{"description":"Line 1\nLine 2\n\nLine 3"}'
+
+# Also GOOD — use double quotes with actual newlines
+linear-cli i create "Title" -t ENG -d "Line 1
+Line 2
+
+Line 3"
+```
+
+**Applies to:** `linear-cli`, `gh`, and any tool accepting descriptions via `-d` or `--data` flags.
+
+### Heredoc Gotcha
+
+When using `--data` with a heredoc, the JSON parser interprets `\n` correctly (it's valid JSON escape syntax). But `-d` with a heredoc passes raw text — use `--data` for proper JSON parsing.
+
+## Linear CLI Patterns
+
+### Creating Child Issues
+
+```bash
+linear-cli i create "Sub-issue Title" -t TEAM --data '{"parentId":"PARENT-ISSUE"}'
+```
+
+The `parentId` field links the new issue as a child. Works for any parent issue in the same team.
+
+### Draft / Placeholder Issues
+
+When creating placeholder or proposed issues (not final requirements), mark them clearly:
+
+```bash
+linear-cli i create "Title" -t TEAM --data '{
+  "parentId":"PARENT-ISSUE",
+  "description":"**Status:** Draft / Placeholder\n**Owner:** TBD\n\nDescription text.\n\nThis is a proposed sub-issue. It is a draft idea, not an official requirement."
+}'
+```
+
+### JSON vs Flags
+
+Prefer `--data` with JSON over individual flags when setting multiple fields. It avoids shell quoting issues and is more maintainable.
+
+## General Patterns
+
+- Always use `--data` with JSON (not `-d` with plain strings) for multi-line descriptions.
+- Prefer `--dry-run` to preview before creating issues.
+- Use `--id-only` when scripting to get clean output for chaining.
+- For updates, use `--data` JSON as well — it supports the same field names as create.
