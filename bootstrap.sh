@@ -56,6 +56,7 @@ if [ ! -f "$chezmoi_config_file" ]; then
   git_name="$(git config --global user.name 2>/dev/null || true)"
   git_email="$(git config --global user.email 2>/dev/null || true)"
   {
+    printf "sourceDir = \"%s\"\n\n" "$(toml_escape "$repo_dir")"
     printf "[data]\n"
     printf "profile = \"personal\"\n"
     printf "name = \"%s\"\n" "$(toml_escape "${git_name:-Philip Bjorge}")"
@@ -64,11 +65,8 @@ if [ ! -f "$chezmoi_config_file" ]; then
   echo "Edit $chezmoi_config_file if this machine should use a different profile or email."
 fi
 
-echo "Initializing chezmoi source..."
-chezmoi init "$repo_dir"
-
 echo "Applying dotfiles..."
-chezmoi apply --source "$repo_dir"
+chezmoi apply
 
 if [ -f "$HOME/Brewfile" ]; then
   echo "Ensuring Homebrew bundle is installed..."
