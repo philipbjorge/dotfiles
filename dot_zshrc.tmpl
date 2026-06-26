@@ -83,6 +83,9 @@ compdef _directories md
 alias ls="${aliases[ls]:-ls} -A"
 alias vi=nvim
 alias vim=nvim
+{{- if eq .profile "work" }}
+alias assume="source ${HOMEBREW_PREFIX}/bin/assume"
+{{- end }}
 
 # Set shell options: http://zsh.sourceforge.net/Doc/Release/Options.html.
 setopt glob_dots     # no special treatment for file names with a leading dot

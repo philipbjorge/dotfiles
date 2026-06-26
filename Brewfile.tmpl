@@ -6,6 +6,11 @@ brew "gh"
 brew "direnv"
 brew "duti"
 brew "neovim"
+{{- if eq .profile "work" }}
+brew "awscli"
+tap "fwdcloudsec/granted"
+brew "fwdcloudsec/granted/granted"
+{{- end }}
 
 {{- if eq .chezmoi.os "darwin" }}
 cask "1password"

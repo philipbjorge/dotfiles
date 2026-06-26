@@ -1,0 +1,10 @@
+{{ if eq .profile "work" -}}
+#!/bin/sh
+set -eu
+
+# Only run if AWS SSO is not yet configured
+if ! grep -q "sso_start_url" "$HOME/.aws/config" 2>/dev/null; then
+  echo "AWS SSO not configured. Starting setup..."
+  aws configure sso
+fi
+{{- end }}

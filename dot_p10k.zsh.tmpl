@@ -62,6 +62,9 @@
     # virtualenv              # python virtual environment
     # context                 # user@host
     # time                    # current time
+    {{- if eq .profile "work" }}
+    aws                        # active AWS profile
+    {{- end }}
   )
 
   # Basic style options that define the overall prompt look.
