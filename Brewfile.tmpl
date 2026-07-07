@@ -8,6 +8,7 @@ brew "duti"
 brew "neovim"
 {{- if eq .profile "work" }}
 brew "awscli"
+brew "opentofu"
 tap "fwdcloudsec/granted"
 brew "fwdcloudsec/granted/granted"
 {{- end }}
@@ -16,13 +17,16 @@ brew "fwdcloudsec/granted/granted"
 cask "1password"
 cask "1password-cli"
 cask "bartender"
+cask "cleanshot"
 cask "font-jetbrains-mono"
 cask "ghostty"
-cask "handy"
 cask "hyperkey"
 {{- if eq .profile "work" }}
 cask "linear"
 cask "lm-studio"
+cask "wispr-flow"
+{{- else }}
+cask "handy"
 {{- end }}
 cask "loop"
 cask "maccy"
